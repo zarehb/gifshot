@@ -1,7 +1,9 @@
 (function() {
   var POSSIBLE_IMAGES = 26,
     TOTAL_IMAGES = 9,
+    TIMEOUT = 5000,
     COLUMNS = 3,
+    gifsShown = false,
     randomNums = _.shuffle(_.range(1, POSSIBLE_IMAGES + 1)).slice(0, TOTAL_IMAGES),
     loadedImages = 0,
     gifshotLoader = document.querySelector('.gifshot-loader');
@@ -24,13 +26,23 @@
     GIF.onload = function() {
       loadedImages += 1;
       if(loadedImages >= TOTAL_IMAGES) {
-        gifshotLoader.classList.add('hidden');
-        imageRows.forEach(function(currentImageRow) {
-          currentImageRow.classList.remove('hidden');
-        });
+        showGIFs();
       }
     };
 
     rowElem.appendChild(GIF);
   });
+
+  //just in case one of the onload events don't fire correcly
+  setTimeout(showGIFs, TIMEOUT);
+
+  function showGIFs(){
+    if(!gifsShown){
+      gifshotLoader.classList.add('hidden');
+      imageRows.forEach(function(currentImageRow) {
+        currentImageRow.classList.remove('hidden');
+      });
+      gifsShown = true;
+    }
+  }
 }());
