@@ -61,7 +61,7 @@ gifshot.createGIF({}, function(obj) {
 
 ## Demo Set Up
 
-1.  git clone this repo: `git clone https://git.corp.yahoo.com/sports/gifshot.git`
+1.  git clone this repo: `git clone git@github.com:yahoo/gifshot.git`
 2.  Install [Node.js](http://nodejs.org/)
 3.  Install all local dependencies: `npm install`
 4.  Start up the included node.js preview server: `npm run preview`
