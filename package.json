@@ -5,7 +5,7 @@
   "main": "./src/gifshot",
   "repository": {
     "type": "git",
-    "url": "https://git.corp.yahoo.com/sports/gifshot.git"
+    "url": "https://github.com/yahoo/gifshot.git"
   },
   "keywords": [
     "gif",
