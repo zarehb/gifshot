@@ -49,7 +49,7 @@
           var obj = {};
 
           _.each(selectedOptions, function(val, key) {
-            if(val) {
+            if (val) {
               obj[key] = val;
             }
           });
@@ -72,12 +72,12 @@
       Prism.highlightElement(gifshotCode);
 
       if (targetElem && (targetElem.id === 'gifWidth' || targetElem.id === 'gifHeight')) {
-        if(selectedOptions.gifHeight && selectedOptions.gifWidth) {
+        if (selectedOptions.gifHeight && selectedOptions.gifWidth) {
           gifshotImagePreview.innerHTML = '';
           placeholderDiv.style.height = selectedOptions.gifHeight + 'px';
           placeholderDiv.style.width = selectedOptions.gifWidth + 'px';
           placeholderDivDimensions.innerHTML = selectedOptions.gifWidth + ' x ' + selectedOptions.gifHeight;
-          if(selectedOptions.gifWidth < 60 || selectedOptions.gifHeight < 20) {
+          if (selectedOptions.gifWidth < 60 || selectedOptions.gifHeight < 20) {
             placeholderDivDimensions.classList.add('hidden');
           } else {
             placeholderDivDimensions.classList.remove('hidden');
@@ -134,8 +134,8 @@
       });
     };
 
-    bindEvents();
-    updateCodeBlock({
-      targetElem: gifWidth
-    });
+  bindEvents();
+  updateCodeBlock({
+    targetElem: gifWidth
+  });
 }(window, document));

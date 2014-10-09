@@ -1488,7 +1488,7 @@ stopVideoStreaming = function (obj) {
   });
 };
 createAndGetGIF = function (obj, callback) {
-  var options = obj.options || {}, images = options.images, video = options.video, numFrames = options.numFrames, interval = options.interval, wait = options.video ? 0 : interval * 10000, cameraStream = obj.cameraStream, videoElement = obj.videoElement, videoWidth = obj.videoWidth, videoHeight = obj.videoHeight, gifWidth = options.gifWidth, gifHeight = options.gifHeight, cropDimensions = screenShot.getCropDimensions({
+  var options = obj.options || {}, images = options.images, video = options.video, numFrames = +options.numFrames, interval = +options.interval, wait = options.video ? 0 : interval * 10000, cameraStream = obj.cameraStream, videoElement = obj.videoElement, videoWidth = obj.videoWidth, videoHeight = obj.videoHeight, gifWidth = +options.gifWidth, gifHeight = +options.gifHeight, cropDimensions = screenShot.getCropDimensions({
       'videoWidth': videoWidth,
       'videoHeight': videoHeight,
       'gifHeight': gifHeight,
