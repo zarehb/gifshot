@@ -11,6 +11,7 @@ define({
   'gifWidth': 200,
   'gifHeight': 200,
   'interval': 0.1,
+  'delay': 250,
   'numFrames': 10,
   'keepCameraOn': false,
   'images': [],

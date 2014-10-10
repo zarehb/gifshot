@@ -17,31 +17,28 @@ define([
 
       var canvas = document.createElement('canvas'),
         context,
+        existingImages = options.images,
+        hasExistingImages = !!(existingImages.length),
         videoElement = options.videoElement,
         keepCameraOn = options.keepCameraOn,
         webcamVideoElement = options.webcamVideoElement,
         cameraStream = options.cameraStream,
-        gifWidth = options.gifWidth,
-        gifHeight = options.gifHeight,
+        gifWidth = +options.gifWidth,
+        gifHeight = +options.gifHeight,
         videoWidth = options.videoWidth,
         videoHeight = options.videoHeight,
-        sampleInterval = options.sampleInterval,
-        numWorkers = options.numWorkers,
+        sampleInterval = +options.sampleInterval,
+        numWorkers = +options.numWorkers,
         crop = options.crop,
-        interval = options.interval,
+        interval = +options.interval,
+        waitBetweenFrames = hasExistingImages ? 0 : interval * 1000,
         progressCallback = options.progressCallback,
         savedRenderingContexts = options.savedRenderingContexts,
         saveRenderingContexts = options.saveRenderingContexts,
         renderingContextsToSave = [],
         numFrames = savedRenderingContexts.length ? savedRenderingContexts.length : options.numFrames,
         pendingFrames = numFrames,
-        ag = new AnimatedGIF({
-          'sampleInterval': sampleInterval,
-          'numWorkers': numWorkers,
-          'width': gifWidth,
-          'height': gifHeight,
-          'delay': interval
-        }),
+        ag = new AnimatedGIF(options),
         text = options.text,
         fontWeight = options.fontWeight,
         fontSize = utils.getFontSize(options),
@@ -88,7 +85,7 @@ define([
           progressCallback((numFrames - pendingFrames) / numFrames);
 
           if (framesLeft > 0) {
-            setTimeout(captureFrame, interval * 1000); // timeouts are in milliseconds
+            setTimeout(captureFrame, waitBetweenFrames);
           }
 
           if (!pendingFrames) {

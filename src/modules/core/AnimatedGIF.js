@@ -14,8 +14,6 @@ define([
   'dependencies/gifWriter'
 ], function(utils, frameWorkerCode, NeuQuant, GifWriter) {
   var AnimatedGIF = function(options) {
-    options = utils.isObject(options) ? options : {};
-
     this.canvas = null;
     this.ctx = null;
     this.repeat = 0;
@@ -26,21 +24,13 @@ define([
     this.workers = [];
     this.availableWorkers = [];
     this.generatingGIF = false;
-    this.options = options = utils.mergeOptions(this.defaultOptions, options);
+    this.options = options;
 
     // Constructs and initializes the the web workers appropriately
     this.initializeWebWorkers(options);
   };
 
   AnimatedGIF.prototype = {
-    'defaultOptions': {
-      'width': 160,
-      'height': 120,
-      'delay': 250,
-      'palette': null,
-      'sampleInterval': 10,
-      'numWorkers': 2
-    },
     'workerMethods': frameWorkerCode(),
     'initializeWebWorkers': function(options) {
       var processFrameWorkerCode = NeuQuant.toString() + '(' + frameWorkerCode.toString() + '());',
@@ -71,10 +61,9 @@ define([
 
       this.workerError = workerError;
       this.canvas = document.createElement('canvas');
-      this.canvas.width = options.width;
-      this.canvas.height = options.height;
+      this.canvas.width = options.gifWidth;
+      this.canvas.height = options.gifHeight;
       this.ctx = this.canvas.getContext('2d');
-      this.options.delay = this.options.delay * 0.1;
       this.frames = [];
     },
     // Return a worker for processing a frame
@@ -205,11 +194,14 @@ define([
           'loop': this.repeat
         },
         options = this.options,
-        height = options.height,
-        width = options.width,
+        interval = options.interval,
+        existingImages = options.images,
+        hasExistingImages = !!(existingImages.length),
+        height = options.gifHeight,
+        width = options.gifWidth,
         gifWriter = new GifWriter(buffer, width, height, gifOptions),
         onRenderProgressCallback = this.onRenderProgressCallback,
-        delay = options.delay,
+        delay = hasExistingImages ? interval * 100 : 0,
         bufferToString,
         gif;
 
@@ -250,8 +242,8 @@ define([
       var self = this,
         ctx = this.ctx,
         options = this.options,
-        width = options.width,
-        height = options.height,
+        width = options.gifWidth,
+        height = options.gifHeight,
         imageData,
         gifHeight = gifshotOptions.gifHeight,
         gifWidth = gifshotOptions.gifWidth,
