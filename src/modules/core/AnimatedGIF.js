@@ -96,17 +96,17 @@ define([
       // The GIF is not written until we're done with all the frames
       // because they might not be processed in the same order
       var self = this,
-        frames = this.frames,
+        frames = self.frames,
         allDone = frames.every(function(frame) {
           return !frame.beingProcessed && frame.done;
         });
 
-      this.numRenderedFrames++;
-      this.onRenderProgressCallback(this.numRenderedFrames * 0.75 / frames.length);
+      self.numRenderedFrames++;
+      self.onRenderProgressCallback(self.numRenderedFrames * 0.75 / frames.length);
 
       if (allDone) {
-        if (!this.generatingGIF) {
-          this.generateGIF(frames, this.onRenderCompleteCallback);
+        if (!self.generatingGIF) {
+          self.generateGIF(frames, self.onRenderCompleteCallback);
         }
       } else {
         setTimeout(function() {
@@ -236,15 +236,14 @@ define([
     'setRepeat': function(r) {
       this.repeat = r;
     },
-    'addFrame': function(element, src, gifshotOptions) {
+    'addFrame': function(element, gifshotOptions) {
       gifshotOptions = utils.isObject(gifshotOptions) ? gifshotOptions : {};
 
       var self = this,
-        ctx = this.ctx,
-        options = this.options,
+        ctx = self.ctx,
+        options = self.options,
         width = options.gifWidth,
         height = options.gifHeight,
-        imageData,
         gifHeight = gifshotOptions.gifHeight,
         gifWidth = gifshotOptions.gifWidth,
         text = gifshotOptions.text,
@@ -256,13 +255,10 @@ define([
         textBaseline = gifshotOptions.textBaseline,
         textXCoordinate = gifshotOptions.textXCoordinate ? gifshotOptions.textXCoordinate : textAlign === 'left' ? 1 : textAlign === 'right' ? width : width / 2,
         textYCoordinate = gifshotOptions.textYCoordinate ? gifshotOptions.textYCoordinate : textBaseline === 'top' ? 1 : textBaseline === 'center' ? height / 2 : height,
-        font = fontWeight + ' ' + fontSize + ' ' + fontFamily;
+        font = fontWeight + ' ' + fontSize + ' ' + fontFamily,
+        imageData;
 
       try {
-        if (src) {
-          element.src = src;
-        }
-
         ctx.drawImage(element, 0, 0, width, height);
 
         if (text) {
@@ -310,7 +306,7 @@ define([
           }, 0);
         };
 
-      this.startRendering(onRenderComplete);
+      self.startRendering(onRenderComplete);
     },
     'destroyWorkers': function() {
       if (this.workerError) {

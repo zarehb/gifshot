@@ -1023,14 +1023,14 @@ AnimatedGIF = function (utils, frameWorkerCode, NeuQuant, GifWriter) {
       return str;
     },
     'onFrameFinished': function () {
-      var self = this, frames = this.frames, allDone = frames.every(function (frame) {
+      var self = this, frames = self.frames, allDone = frames.every(function (frame) {
           return !frame.beingProcessed && frame.done;
         });
-      this.numRenderedFrames++;
-      this.onRenderProgressCallback(this.numRenderedFrames * 0.75 / frames.length);
+      self.numRenderedFrames++;
+      self.onRenderProgressCallback(self.numRenderedFrames * 0.75 / frames.length);
       if (allDone) {
-        if (!this.generatingGIF) {
-          this.generateGIF(frames, this.onRenderCompleteCallback);
+        if (!self.generatingGIF) {
+          self.generateGIF(frames, self.onRenderCompleteCallback);
         }
       } else {
         setTimeout(function () {
@@ -1108,13 +1108,10 @@ AnimatedGIF = function (utils, frameWorkerCode, NeuQuant, GifWriter) {
     'setRepeat': function (r) {
       this.repeat = r;
     },
-    'addFrame': function (element, src, gifshotOptions) {
+    'addFrame': function (element, gifshotOptions) {
       gifshotOptions = utils.isObject(gifshotOptions) ? gifshotOptions : {};
-      var self = this, ctx = this.ctx, options = this.options, width = options.gifWidth, height = options.gifHeight, imageData, gifHeight = gifshotOptions.gifHeight, gifWidth = gifshotOptions.gifWidth, text = gifshotOptions.text, fontWeight = gifshotOptions.fontWeight, fontSize = utils.getFontSize(gifshotOptions), fontFamily = gifshotOptions.fontFamily, fontColor = gifshotOptions.fontColor, textAlign = gifshotOptions.textAlign, textBaseline = gifshotOptions.textBaseline, textXCoordinate = gifshotOptions.textXCoordinate ? gifshotOptions.textXCoordinate : textAlign === 'left' ? 1 : textAlign === 'right' ? width : width / 2, textYCoordinate = gifshotOptions.textYCoordinate ? gifshotOptions.textYCoordinate : textBaseline === 'top' ? 1 : textBaseline === 'center' ? height / 2 : height, font = fontWeight + ' ' + fontSize + ' ' + fontFamily;
+      var self = this, ctx = self.ctx, options = self.options, width = options.gifWidth, height = options.gifHeight, gifHeight = gifshotOptions.gifHeight, gifWidth = gifshotOptions.gifWidth, text = gifshotOptions.text, fontWeight = gifshotOptions.fontWeight, fontSize = utils.getFontSize(gifshotOptions), fontFamily = gifshotOptions.fontFamily, fontColor = gifshotOptions.fontColor, textAlign = gifshotOptions.textAlign, textBaseline = gifshotOptions.textBaseline, textXCoordinate = gifshotOptions.textXCoordinate ? gifshotOptions.textXCoordinate : textAlign === 'left' ? 1 : textAlign === 'right' ? width : width / 2, textYCoordinate = gifshotOptions.textYCoordinate ? gifshotOptions.textYCoordinate : textBaseline === 'top' ? 1 : textBaseline === 'center' ? height / 2 : height, font = fontWeight + ' ' + fontSize + ' ' + fontFamily, imageData;
       try {
-        if (src) {
-          element.src = src;
-        }
         ctx.drawImage(element, 0, 0, width, height);
         if (text) {
           ctx.font = font;
@@ -1155,7 +1152,7 @@ AnimatedGIF = function (utils, frameWorkerCode, NeuQuant, GifWriter) {
             completeCallback(gif);
           }, 0);
         };
-      this.startRendering(onRenderComplete);
+      self.startRendering(onRenderComplete);
     },
     'destroyWorkers': function () {
       if (this.workerError) {
@@ -1193,7 +1190,7 @@ existingImages = function (obj) {
   utils.each(images, function (index, currentImage) {
     if (utils.isElement(currentImage)) {
       currentImage.crossOrigin = 'Anonymous';
-      ag.addFrame(currentImage, currentImage.src, options);
+      ag.addFrame(currentImage, options);
       loadedImages += 1;
       if (loadedImages === imagesLength) {
         getBase64GIF(ag, callback);
@@ -1207,65 +1204,91 @@ existingImages = function (obj) {
         }
       };
       tempImage.src = currentImage;
-      utils.setCSSAttr(tempImage, {
-        'position': 'fixed',
-        'opacity': '0'
-      });
-      (function (tempImage, ag, currentImage) {
+      (function (tempImage) {
         tempImage.onload = function () {
-          ag.addFrame(tempImage, currentImage, options);
+          ag.addFrame(tempImage, options);
           utils.removeElement(tempImage);
           loadedImages += 1;
           if (loadedImages === imagesLength) {
             getBase64GIF(ag, callback);
           }
         };
-      }(tempImage, ag, currentImage));
+      }(tempImage));
+      utils.setCSSAttr(tempImage, {
+        'position': 'fixed',
+        'opacity': '0'
+      });
       document.body.appendChild(tempImage);
     }
   });
 };
 screenShot = {
-  getWebcamGIF: function (options, callback) {
+  getGIF: function (options, callback) {
     callback = utils.isFunction(callback) ? callback : function () {
     };
-    var canvas = document.createElement('canvas'), context, existingImages = options.images, hasExistingImages = !!existingImages.length, videoElement = options.videoElement, keepCameraOn = options.keepCameraOn, webcamVideoElement = options.webcamVideoElement, cameraStream = options.cameraStream, gifWidth = +options.gifWidth, gifHeight = +options.gifHeight, videoWidth = options.videoWidth, videoHeight = options.videoHeight, sampleInterval = +options.sampleInterval, numWorkers = +options.numWorkers, crop = options.crop, interval = +options.interval, waitBetweenFrames = hasExistingImages ? 0 : interval * 1000, progressCallback = options.progressCallback, savedRenderingContexts = options.savedRenderingContexts, saveRenderingContexts = options.saveRenderingContexts, renderingContextsToSave = [], numFrames = savedRenderingContexts.length ? savedRenderingContexts.length : options.numFrames, pendingFrames = numFrames, ag = new AnimatedGIF(options), text = options.text, fontWeight = options.fontWeight, fontSize = utils.getFontSize(options), fontFamily = options.fontFamily, fontColor = options.fontColor, textAlign = options.textAlign, textBaseline = options.textBaseline, textXCoordinate = options.textXCoordinate ? options.textXCoordinate : textAlign === 'left' ? 1 : textAlign === 'right' ? gifWidth : gifWidth / 2, textYCoordinate = options.textYCoordinate ? options.textYCoordinate : textBaseline === 'top' ? 1 : textBaseline === 'center' ? gifHeight / 2 : gifHeight, font = fontWeight + ' ' + fontSize + ' ' + fontFamily, sourceX = crop ? Math.floor(crop.scaledWidth / 2) : 0, sourceWidth = crop ? videoWidth - crop.scaledWidth : 0, sourceY = crop ? Math.floor(crop.scaledHeight / 2) : 0, sourceHeight = crop ? videoHeight - crop.scaledHeight : 0, captureFrame = function () {
+    var canvas = document.createElement('canvas'), context, existingImages = options.images, hasExistingImages = !!existingImages.length, videoElement = options.videoElement, keepCameraOn = options.keepCameraOn, webcamVideoElement = options.webcamVideoElement, cameraStream = options.cameraStream, gifWidth = +options.gifWidth, gifHeight = +options.gifHeight, videoWidth = options.videoWidth, videoHeight = options.videoHeight, sampleInterval = +options.sampleInterval, numWorkers = +options.numWorkers, crop = options.crop, interval = +options.interval, waitBetweenFrames = hasExistingImages ? 0 : interval * 1000, progressCallback = options.progressCallback, savedRenderingContexts = options.savedRenderingContexts, saveRenderingContexts = options.saveRenderingContexts, renderingContextsToSave = [], numFrames = savedRenderingContexts.length ? savedRenderingContexts.length : options.numFrames, pendingFrames = numFrames, ag = new AnimatedGIF(options), text = options.text, fontWeight = options.fontWeight, fontSize = utils.getFontSize(options), fontFamily = options.fontFamily, fontColor = options.fontColor, textAlign = options.textAlign, textBaseline = options.textBaseline, textXCoordinate = options.textXCoordinate ? options.textXCoordinate : textAlign === 'left' ? 1 : textAlign === 'right' ? gifWidth : gifWidth / 2, textYCoordinate = options.textYCoordinate ? options.textYCoordinate : textBaseline === 'top' ? 1 : textBaseline === 'center' ? gifHeight / 2 : gifHeight, font = fontWeight + ' ' + fontSize + ' ' + fontFamily, sourceX = crop ? Math.floor(crop.scaledWidth / 2) : 0, sourceWidth = crop ? videoWidth - crop.scaledWidth : 0, sourceY = crop ? Math.floor(crop.scaledHeight / 2) : 0, sourceHeight = crop ? videoHeight - crop.scaledHeight : 0, captureFrames = function captureFrame() {
         var framesLeft = pendingFrames - 1;
         if (savedRenderingContexts.length) {
           context.putImageData(savedRenderingContexts[numFrames - pendingFrames], 0, 0);
         } else {
-          context.drawImage(videoElement, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, gifWidth, gifHeight);
+          drawVideo();
         }
-        if (saveRenderingContexts) {
-          renderingContextsToSave.push(context.getImageData(0, 0, gifWidth, gifHeight));
+        function drawVideo() {
+          try {
+            if (sourceWidth > videoWidth) {
+              sourceWidth = videoWidth;
+            }
+            if (sourceHeight > videoHeight) {
+              sourceHeight = videoHeight;
+            }
+            if (sourceX < 0) {
+              sourceX = 0;
+            }
+            if (sourceY < 0) {
+              sourceY = 0;
+            }
+            context.drawImage(videoElement, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, gifWidth, gifHeight);
+            finishCapture();
+          } catch (e) {
+            if (e.name === 'NS_ERROR_NOT_AVAILABLE') {
+              setTimeout(drawVideo, 100);
+            } else {
+              throw e;
+            }
+          }
         }
-        if (text) {
-          context.font = font;
-          context.fillStyle = fontColor;
-          context.textAlign = textAlign;
-          context.textBaseline = textBaseline;
-          context.fillText(text, textXCoordinate, textYCoordinate);
-        }
-        ag.addFrameImageData(context.getImageData(0, 0, gifWidth, gifHeight));
-        pendingFrames = framesLeft;
-        progressCallback((numFrames - pendingFrames) / numFrames);
-        if (framesLeft > 0) {
-          setTimeout(captureFrame, waitBetweenFrames);
-        }
-        if (!pendingFrames) {
-          ag.getBase64GIF(function (image) {
-            callback({
-              'error': false,
-              'errorCode': '',
-              'errorMsg': '',
-              'image': image,
-              'cameraStream': cameraStream,
-              'videoElement': videoElement,
-              'webcamVideoElement': webcamVideoElement,
-              'savedRenderingContexts': renderingContextsToSave,
-              'keepCameraOn': keepCameraOn
+        function finishCapture() {
+          if (saveRenderingContexts) {
+            renderingContextsToSave.push(context.getImageData(0, 0, gifWidth, gifHeight));
+          }
+          if (text) {
+            context.font = font;
+            context.fillStyle = fontColor;
+            context.textAlign = textAlign;
+            context.textBaseline = textBaseline;
+            context.fillText(text, textXCoordinate, textYCoordinate);
+          }
+          ag.addFrameImageData(context.getImageData(0, 0, gifWidth, gifHeight));
+          pendingFrames = framesLeft;
+          progressCallback((numFrames - pendingFrames) / numFrames);
+          if (framesLeft > 0) {
+            setTimeout(captureFrame, waitBetweenFrames);
+          }
+          if (!pendingFrames) {
+            ag.getBase64GIF(function (image) {
+              callback({
+                'error': false,
+                'errorCode': '',
+                'errorMsg': '',
+                'image': image,
+                'cameraStream': cameraStream,
+                'videoElement': videoElement,
+                'webcamVideoElement': webcamVideoElement,
+                'savedRenderingContexts': renderingContextsToSave,
+                'keepCameraOn': keepCameraOn
+              });
             });
-          });
+          }
         }
       };
     numFrames = numFrames !== undefined ? numFrames : 10;
@@ -1273,7 +1296,13 @@ screenShot = {
     canvas.width = gifWidth;
     canvas.height = gifHeight;
     context = canvas.getContext('2d');
-    captureFrame();
+    (function capture() {
+      if (videoElement.currentTime === 0) {
+        setTimeout(capture, 100);
+        return;
+      }
+      captureFrames();
+    }());
   },
   'getCropDimensions': function (obj) {
     var width = obj.videoWidth, height = obj.videoHeight, gifWidth = obj.gifWidth, gifHeight = obj.gifHeight, result = {
@@ -1473,7 +1502,7 @@ stopVideoStreaming = function (obj) {
   });
 };
 createAndGetGIF = function (obj, callback) {
-  var options = obj.options || {}, images = options.images, video = options.video, numFrames = +options.numFrames, interval = +options.interval, wait = options.video ? 0 : interval * 10000, cameraStream = obj.cameraStream, videoElement = obj.videoElement, videoWidth = obj.videoWidth, videoHeight = obj.videoHeight, gifWidth = +options.gifWidth, gifHeight = +options.gifHeight, cropDimensions = screenShot.getCropDimensions({
+  var options = obj.options || {}, images = options.images, video = options.video, numFrames = +options.numFrames, cameraStream = obj.cameraStream, videoElement = obj.videoElement, videoWidth = obj.videoWidth, videoHeight = obj.videoHeight, gifWidth = +options.gifWidth, gifHeight = +options.gifHeight, cropDimensions = screenShot.getCropDimensions({
       'videoWidth': videoWidth,
       'videoHeight': videoHeight,
       'gifHeight': gifHeight,
@@ -1497,14 +1526,12 @@ createAndGetGIF = function (obj, callback) {
     document.body.appendChild(videoElement);
   }
   videoElement.play();
-  setTimeout(function () {
-    screenShot.getWebcamGIF(options, function (obj) {
-      if ((!images || !images.length) && (!video || !video.length)) {
-        stopVideoStreaming(obj);
-      }
-      completeCallback(obj);
-    });
-  }, wait);
+  screenShot.getGIF(options, function (obj) {
+    if ((!images || !images.length) && (!video || !video.length)) {
+      stopVideoStreaming(obj);
+    }
+    completeCallback(obj);
+  });
 };
 existingVideo = function (obj) {
   var existingVideo = obj.existingVideo, callback = obj.callback, options = obj.options, skipObj = {
@@ -1610,7 +1637,7 @@ API = function (utils, error, defaultOptions, isSupported, isWebCamGIFSupported,
     'isWebCamGIFSupported': isWebCamGIFSupported,
     'isExistingVideoGIFSupported': isExistingVideoGIFSupported,
     'isExistingImagesGIFSupported': isExistingImagesGIFSupported,
-    'VERSION': '0.0.1'
+    'VERSION': '0.1.0'
   };
   return gifshot;
 }(utils, error, defaultOptions, isSupported, isWebCamGIFSupported, isExistingImagesGIFSupported, isExistingVideoGIFSupported, createGIF, takeSnapShot, stopVideoStreaming);
