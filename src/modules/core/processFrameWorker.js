@@ -62,7 +62,10 @@ define([
           numberPixels = width * height,
           indexedPixels = new Uint8Array(numberPixels),
           k = 0,
-          i;
+          i,
+          r,
+          g,
+          b;
 
         for (i = 0; i < numberPixels; i++) {
           r = rgbComponents[k++];
