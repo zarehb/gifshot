@@ -120,11 +120,11 @@ define([
         webcamVideoElement = obj.webcamVideoElement,
         videoElement = utils.isElement(existingVideo) ? existingVideo : webcamVideoElement ? webcamVideoElement : document.createElement('video'),
         lastCameraStream = obj.lastCameraStream,
-        setCrossOrigin = obj.setCrossOrigin,
+        crossOrigin = obj.crossOrigin,
         cameraStream;
 
-      if (setCrossOrigin) {
-        videoElement.crossOrigin = options.setCrossOrigin;
+      if (crossOrigin) {
+        videoElement.crossOrigin = options.crossOrigin;
       }
       videoElement.autoplay = true;
       videoElement.loop = true;
@@ -208,7 +208,7 @@ define([
         },
         'lastCameraStream': options.lastCameraStream,
         'webcamVideoElement': webcamVideoElement,
-        'setCrossOrigin': options.setCrossOrigin
+        'crossOrigin': options.crossOrigin
       });
     },
     'stopVideoStreaming': function(obj) {

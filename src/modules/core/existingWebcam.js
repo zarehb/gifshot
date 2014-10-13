@@ -35,7 +35,7 @@ define([
       'lastCameraStream': lastCameraStream,
       'callback': callback,
       'webcamVideoElement': webcamVideoElement,
-      'setCrossOrigin': options.setCrossOrigin
+      'crossOrigin': options.crossOrigin
     });
   };
 });

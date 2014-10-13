@@ -289,7 +289,7 @@ defaultOptions = {
   },
   'saveRenderingContexts': false,
   'savedRenderingContexts': [],
-  'setCrossOrigin': 'Anonymous'
+  'crossOrigin': 'Anonymous'
 };
 isSupported = function () {
   return error.isValid();
@@ -1189,8 +1189,8 @@ existingImages = function (obj) {
   ag = new AnimatedGIF(options);
   utils.each(images, function (index, currentImage) {
     if (utils.isElement(currentImage)) {
-      if (options.setCrossOrigin) {
-        currentImage.crossOrigin = options.setCrossOrigin;
+      if (options.crossOrigin) {
+        currentImage.crossOrigin = options.crossOrigin;
       }
       ag.addFrame(currentImage, options);
       loadedImages += 1;
@@ -1199,8 +1199,8 @@ existingImages = function (obj) {
       }
     } else if (utils.isString(currentImage)) {
       tempImage = document.createElement('img');
-      if (options.setCrossOrigin) {
-        currentImage.crossOrigin = options.setCrossOrigin;
+      if (options.crossOrigin) {
+        currentImage.crossOrigin = options.crossOrigin;
       }
       tempImage.onerror = function (e) {
         if (imagesLength > 0) {
@@ -1412,9 +1412,9 @@ videoStream = {
     }, 100);
   },
   'startStreaming': function (obj) {
-    var self = this, errorCallback = utils.isFunction(obj.error) ? obj.error : utils.noop, streamedCallback = utils.isFunction(obj.streamed) ? obj.streamed : utils.noop, completedCallback = utils.isFunction(obj.completed) ? obj.completed : utils.noop, existingVideo = obj.existingVideo, webcamVideoElement = obj.webcamVideoElement, videoElement = utils.isElement(existingVideo) ? existingVideo : webcamVideoElement ? webcamVideoElement : document.createElement('video'), lastCameraStream = obj.lastCameraStream, setCrossOrigin = obj.setCrossOrigin, cameraStream;
-    if (setCrossOrigin) {
-      videoElement.crossOrigin = options.setCrossOrigin;
+    var self = this, errorCallback = utils.isFunction(obj.error) ? obj.error : utils.noop, streamedCallback = utils.isFunction(obj.streamed) ? obj.streamed : utils.noop, completedCallback = utils.isFunction(obj.completed) ? obj.completed : utils.noop, existingVideo = obj.existingVideo, webcamVideoElement = obj.webcamVideoElement, videoElement = utils.isElement(existingVideo) ? existingVideo : webcamVideoElement ? webcamVideoElement : document.createElement('video'), lastCameraStream = obj.lastCameraStream, crossOrigin = obj.crossOrigin, cameraStream;
+    if (crossOrigin) {
+      videoElement.crossOrigin = options.crossOrigin;
     }
     videoElement.autoplay = true;
     videoElement.loop = true;
@@ -1478,7 +1478,7 @@ videoStream = {
       },
       'lastCameraStream': options.lastCameraStream,
       'webcamVideoElement': webcamVideoElement,
-      'setCrossOrigin': options.setCrossOrigin
+      'crossOrigin': options.crossOrigin
     });
   },
   'stopVideoStreaming': function (obj) {
@@ -1569,7 +1569,7 @@ existingVideo = function (obj) {
       createAndGetGIF(obj, callback);
     },
     'existingVideo': existingVideo,
-    'setCrossOrigin': options.setCrossOrigin
+    'crossOrigin': options.crossOrigin
   });
 };
 existingWebcam = function (obj) {
@@ -1590,7 +1590,7 @@ existingWebcam = function (obj) {
     'lastCameraStream': lastCameraStream,
     'callback': callback,
     'webcamVideoElement': webcamVideoElement,
-    'setCrossOrigin': options.setCrossOrigin
+    'crossOrigin': options.crossOrigin
   });
 };
 createGIF = function (userOptions, callback) {

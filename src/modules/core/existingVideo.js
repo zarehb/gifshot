@@ -53,7 +53,7 @@ define([
         createAndGetGIF(obj, callback);
       },
       'existingVideo': existingVideo,
-      'setCrossOrigin': options.setCrossOrigin
+      'crossOrigin': options.crossOrigin
     });
   };
 });
