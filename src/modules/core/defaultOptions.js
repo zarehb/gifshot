@@ -31,5 +31,6 @@ define({
   'progressCallback': function(captureProgress) {},
   'completeCallback': function() {},
   'saveRenderingContexts': false,
-  'savedRenderingContexts': []
+  'savedRenderingContexts': [],
+  'crossOrigin': 'Anonymous'
 });

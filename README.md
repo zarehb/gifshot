@@ -293,6 +293,9 @@ gifshot.takeSnapShot(function(obj) {
 // Note: If you set the saveRenderingContexts option to true, then you get the savedRenderingContexts
 //	in the createGIF callback function
 'savedRenderingContexts': []
+// When existing images or videos are requested used, we set a CORS attribute on the request.
+// Options are 'Anonymous', 'use-credentials', or a falsy value (like '') to not set a CORS attribute.
+'crossOrigin': 'Anonymous'
 ```
 
 

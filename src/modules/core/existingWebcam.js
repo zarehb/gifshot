@@ -34,7 +34,8 @@ define([
     }, {
       'lastCameraStream': lastCameraStream,
       'callback': callback,
-      'webcamVideoElement': webcamVideoElement
+      'webcamVideoElement': webcamVideoElement,
+      'crossOrigin': options.crossOrigin
     });
   };
 });

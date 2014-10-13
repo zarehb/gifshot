@@ -34,7 +34,9 @@ define([
 
     utils.each(images, function(index, currentImage) {
       if (utils.isElement(currentImage)) {
-        currentImage.crossOrigin = 'Anonymous';
+        if (options.crossOrigin) {
+          currentImage.crossOrigin = options.crossOrigin;
+        }
         ag.addFrame(currentImage, options);
         loadedImages += 1;
         if (loadedImages === imagesLength) {
@@ -42,7 +44,9 @@ define([
         }
       } else if (utils.isString(currentImage)) {
         tempImage = document.createElement('img');
-        tempImage.crossOrigin = 'Anonymous';
+        if (options.crossOrigin) {
+          currentImage.crossOrigin = options.crossOrigin;
+        }
         tempImage.onerror = function(e) {
           // If there is an error, ignore the image
           if (imagesLength > 0) {
