@@ -288,7 +288,8 @@ defaultOptions = {
   'completeCallback': function () {
   },
   'saveRenderingContexts': false,
-  'savedRenderingContexts': []
+  'savedRenderingContexts': [],
+  'crossOrigin': 'Anonymous'
 };
 isSupported = function () {
   return error.isValid();
@@ -1178,7 +1179,7 @@ getBase64GIF = function getBase64GIF(animatedGifInstance, callback) {
   });
 };
 existingImages = function (obj) {
-  var images = obj.images, imagesLength = obj.imagesLength, callback = obj.callback, options = obj.options, skipObj = {
+  var images = obj.images, imagesLength = obj.imagesLength, callback = obj.callback, options = obj.options, crossOrigin = obj.crossOrigin, skipObj = {
       'getUserMedia': true,
       'window.URL': true
     }, errorObj = error.validate(skipObj), loadedImages = 0, tempImage, ag;
@@ -1188,7 +1189,7 @@ existingImages = function (obj) {
   ag = new AnimatedGIF(options);
   utils.each(images, function (index, currentImage) {
     if (utils.isElement(currentImage)) {
-      currentImage.crossOrigin = 'Anonymous';
+      currentImage.crossOrigin = crossOrigin;
       ag.addFrame(currentImage, options);
       loadedImages += 1;
       if (loadedImages === imagesLength) {
@@ -1196,7 +1197,7 @@ existingImages = function (obj) {
       }
     } else if (utils.isString(currentImage)) {
       tempImage = document.createElement('img');
-      tempImage.crossOrigin = 'Anonymous';
+      tempImage.crossOrigin = crossOrigin;
       tempImage.onerror = function (e) {
         if (imagesLength > 0) {
           imagesLength -= 1;
@@ -1407,8 +1408,8 @@ videoStream = {
     }, 100);
   },
   'startStreaming': function (obj) {
-    var self = this, errorCallback = utils.isFunction(obj.error) ? obj.error : utils.noop, streamedCallback = utils.isFunction(obj.streamed) ? obj.streamed : utils.noop, completedCallback = utils.isFunction(obj.completed) ? obj.completed : utils.noop, existingVideo = obj.existingVideo, webcamVideoElement = obj.webcamVideoElement, videoElement = utils.isElement(existingVideo) ? existingVideo : webcamVideoElement ? webcamVideoElement : document.createElement('video'), lastCameraStream = obj.lastCameraStream, cameraStream;
-    videoElement.crossOrigin = 'Anonymous';
+    var self = this, errorCallback = utils.isFunction(obj.error) ? obj.error : utils.noop, streamedCallback = utils.isFunction(obj.streamed) ? obj.streamed : utils.noop, completedCallback = utils.isFunction(obj.completed) ? obj.completed : utils.noop, existingVideo = obj.existingVideo, webcamVideoElement = obj.webcamVideoElement, videoElement = utils.isElement(existingVideo) ? existingVideo : webcamVideoElement ? webcamVideoElement : document.createElement('video'), lastCameraStream = obj.lastCameraStream, crossOrigin = obj.crossOrigin, cameraStream;
+    videoElement.crossOrigin = crossOrigin;
     videoElement.autoplay = true;
     videoElement.loop = true;
     videoElement.muted = true;
