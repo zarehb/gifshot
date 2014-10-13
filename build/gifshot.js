@@ -289,7 +289,7 @@ defaultOptions = {
   },
   'saveRenderingContexts': false,
   'savedRenderingContexts': [],
-  'setCrossOrigin': true
+  'setCrossOrigin': 'Anonymous'
 };
 isSupported = function () {
   return error.isValid();
@@ -1190,7 +1190,7 @@ existingImages = function (obj) {
   utils.each(images, function (index, currentImage) {
     if (utils.isElement(currentImage)) {
       if (options.setCrossOrigin) {
-        currentImage.crossOrigin = 'Anonymous';
+        currentImage.crossOrigin = options.setCrossOrigin;
       }
       ag.addFrame(currentImage, options);
       loadedImages += 1;
@@ -1200,7 +1200,7 @@ existingImages = function (obj) {
     } else if (utils.isString(currentImage)) {
       tempImage = document.createElement('img');
       if (options.setCrossOrigin) {
-        currentImage.crossOrigin = 'Anonymous';
+        currentImage.crossOrigin = options.setCrossOrigin;
       }
       tempImage.onerror = function (e) {
         if (imagesLength > 0) {
@@ -1414,7 +1414,7 @@ videoStream = {
   'startStreaming': function (obj) {
     var self = this, errorCallback = utils.isFunction(obj.error) ? obj.error : utils.noop, streamedCallback = utils.isFunction(obj.streamed) ? obj.streamed : utils.noop, completedCallback = utils.isFunction(obj.completed) ? obj.completed : utils.noop, existingVideo = obj.existingVideo, webcamVideoElement = obj.webcamVideoElement, videoElement = utils.isElement(existingVideo) ? existingVideo : webcamVideoElement ? webcamVideoElement : document.createElement('video'), lastCameraStream = obj.lastCameraStream, setCrossOrigin = obj.setCrossOrigin, cameraStream;
     if (setCrossOrigin) {
-      videoElement.crossOrigin = 'Anoymous';
+      videoElement.crossOrigin = options.setCrossOrigin;
     }
     videoElement.autoplay = true;
     videoElement.loop = true;

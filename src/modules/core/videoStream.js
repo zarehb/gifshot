@@ -124,7 +124,7 @@ define([
         cameraStream;
 
       if (setCrossOrigin) {
-        videoElement.crossOrigin = 'Anoymous';
+        videoElement.crossOrigin = options.setCrossOrigin;
       }
       videoElement.autoplay = true;
       videoElement.loop = true;
