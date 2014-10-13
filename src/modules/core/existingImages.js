@@ -35,7 +35,7 @@ define([
     utils.each(images, function(index, currentImage) {
       if (utils.isElement(currentImage)) {
         if (options.setCrossOrigin) {
-          currentImage.crossOrigin = options.setCrossOrigin
+          currentImage.crossOrigin = options.setCrossOrigin;
         }
         ag.addFrame(currentImage, options);
         loadedImages += 1;
