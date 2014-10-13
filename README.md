@@ -295,7 +295,7 @@ gifshot.takeSnapShot(function(obj) {
 'savedRenderingContexts': []
 // When existing images or videos are requested used, we set a CORS attribute on the request.
 // Options are 'Anonymous', 'use-credentials', or a falsy value (like '') to not set a CORS attribute.
-'setCrossOrigin': 'Anonymous'
+'crossOrigin': 'Anonymous'
 ```
 
 
