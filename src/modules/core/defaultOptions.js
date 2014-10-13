@@ -32,5 +32,5 @@ define({
   'completeCallback': function() {},
   'saveRenderingContexts': false,
   'savedRenderingContexts': [],
-  'crossOrigin': 'Anonymous'
+  'setCrossOrigin': true
 });

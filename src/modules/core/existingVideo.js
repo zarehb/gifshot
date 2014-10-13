@@ -52,7 +52,8 @@ define([
         obj.options = options || {};
         createAndGetGIF(obj, callback);
       },
-      'existingVideo': existingVideo
+      'existingVideo': existingVideo,
+      'setCrossOrigin': options.setCrossOrigin
     });
   };
 });

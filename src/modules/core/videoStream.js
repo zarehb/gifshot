@@ -120,17 +120,15 @@ define([
         webcamVideoElement = obj.webcamVideoElement,
         videoElement = utils.isElement(existingVideo) ? existingVideo : webcamVideoElement ? webcamVideoElement : document.createElement('video'),
         lastCameraStream = obj.lastCameraStream,
-        crossOrigin = obj.crossOrigin,
+        setCrossOrigin = obj.setCrossOrigin,
         cameraStream;
 
-      videoElement.crossOrigin = crossOrigin;
-
+      if (setCrossOrigin) {
+        videoElement.crossOrigin = 'Anoymous';
+      }
       videoElement.autoplay = true;
-
       videoElement.loop = true;
-
       videoElement.muted = true;
-
       videoElement.addEventListener('loadeddata', function(event) {
         self.loadedData = true;
       });
@@ -209,7 +207,8 @@ define([
           });
         },
         'lastCameraStream': options.lastCameraStream,
-        'webcamVideoElement': webcamVideoElement
+        'webcamVideoElement': webcamVideoElement,
+        'setCrossOrigin': options.setCrossOrigin
       });
     },
     'stopVideoStreaming': function(obj) {

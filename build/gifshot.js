@@ -289,7 +289,7 @@ defaultOptions = {
   },
   'saveRenderingContexts': false,
   'savedRenderingContexts': [],
-  'crossOrigin': 'Anonymous'
+  'setCrossOrigin': true
 };
 isSupported = function () {
   return error.isValid();
@@ -1179,7 +1179,7 @@ getBase64GIF = function getBase64GIF(animatedGifInstance, callback) {
   });
 };
 existingImages = function (obj) {
-  var images = obj.images, imagesLength = obj.imagesLength, callback = obj.callback, options = obj.options, crossOrigin = obj.crossOrigin, skipObj = {
+  var images = obj.images, imagesLength = obj.imagesLength, callback = obj.callback, options = obj.options, skipObj = {
       'getUserMedia': true,
       'window.URL': true
     }, errorObj = error.validate(skipObj), loadedImages = 0, tempImage, ag;
@@ -1189,7 +1189,9 @@ existingImages = function (obj) {
   ag = new AnimatedGIF(options);
   utils.each(images, function (index, currentImage) {
     if (utils.isElement(currentImage)) {
-      currentImage.crossOrigin = crossOrigin;
+      if (options.setCrossOrigin) {
+        currentImage.crossOrigin = 'Anonymous';
+      }
       ag.addFrame(currentImage, options);
       loadedImages += 1;
       if (loadedImages === imagesLength) {
@@ -1197,7 +1199,9 @@ existingImages = function (obj) {
       }
     } else if (utils.isString(currentImage)) {
       tempImage = document.createElement('img');
-      tempImage.crossOrigin = crossOrigin;
+      if (options.setCrossOrigin) {
+        currentImage.crossOrigin = 'Anonymous';
+      }
       tempImage.onerror = function (e) {
         if (imagesLength > 0) {
           imagesLength -= 1;
@@ -1408,8 +1412,10 @@ videoStream = {
     }, 100);
   },
   'startStreaming': function (obj) {
-    var self = this, errorCallback = utils.isFunction(obj.error) ? obj.error : utils.noop, streamedCallback = utils.isFunction(obj.streamed) ? obj.streamed : utils.noop, completedCallback = utils.isFunction(obj.completed) ? obj.completed : utils.noop, existingVideo = obj.existingVideo, webcamVideoElement = obj.webcamVideoElement, videoElement = utils.isElement(existingVideo) ? existingVideo : webcamVideoElement ? webcamVideoElement : document.createElement('video'), lastCameraStream = obj.lastCameraStream, crossOrigin = obj.crossOrigin, cameraStream;
-    videoElement.crossOrigin = crossOrigin;
+    var self = this, errorCallback = utils.isFunction(obj.error) ? obj.error : utils.noop, streamedCallback = utils.isFunction(obj.streamed) ? obj.streamed : utils.noop, completedCallback = utils.isFunction(obj.completed) ? obj.completed : utils.noop, existingVideo = obj.existingVideo, webcamVideoElement = obj.webcamVideoElement, videoElement = utils.isElement(existingVideo) ? existingVideo : webcamVideoElement ? webcamVideoElement : document.createElement('video'), lastCameraStream = obj.lastCameraStream, setCrossOrigin = obj.setCrossOrigin, cameraStream;
+    if (setCrossOrigin) {
+      videoElement.crossOrigin = 'Anoymous';
+    }
     videoElement.autoplay = true;
     videoElement.loop = true;
     videoElement.muted = true;
@@ -1471,7 +1477,8 @@ videoStream = {
         });
       },
       'lastCameraStream': options.lastCameraStream,
-      'webcamVideoElement': webcamVideoElement
+      'webcamVideoElement': webcamVideoElement,
+      'setCrossOrigin': options.setCrossOrigin
     });
   },
   'stopVideoStreaming': function (obj) {
@@ -1561,7 +1568,8 @@ existingVideo = function (obj) {
       obj.options = options || {};
       createAndGetGIF(obj, callback);
     },
-    'existingVideo': existingVideo
+    'existingVideo': existingVideo,
+    'setCrossOrigin': options.setCrossOrigin
   });
 };
 existingWebcam = function (obj) {
@@ -1581,7 +1589,8 @@ existingWebcam = function (obj) {
   }, {
     'lastCameraStream': lastCameraStream,
     'callback': callback,
-    'webcamVideoElement': webcamVideoElement
+    'webcamVideoElement': webcamVideoElement,
+    'setCrossOrigin': options.setCrossOrigin
   });
 };
 createGIF = function (userOptions, callback) {

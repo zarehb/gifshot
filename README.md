@@ -293,8 +293,8 @@ gifshot.takeSnapShot(function(obj) {
 // Note: If you set the saveRenderingContexts option to true, then you get the savedRenderingContexts
 //	in the createGIF callback function
 'savedRenderingContexts': []
-// The cross origin value. The default value is almost certainly what you need.
-'crossOrigin': 'Anonymous'
+// Whether or not to set 'Anonymous' for the cross origin request
+'setCrossOrigin': true
 ```
 
 
