@@ -24,7 +24,8 @@
             <a href="index.html" role="banner"><img class="gifshot-header-logo" src="images/gifshot.svg" alt="gifshot logo"></a>
           </span>
           <span class="options-button-group">
-            <button type="button" id="create-gif" class="btn btn-large btn-primary create-gif-button">Create GIF</button>
+            <a href="#" type="button" id="create-gif" class="btn btn-large btn-primary create-gif-button" role="button">Create GIF</a>
+            <a href="#" type="button" id="save-gif" class="btn btn-large btn-default save-gif-button hidden" role="button" download="gifshot-demo.gif">Save GIF</a>
           </span>
           <!-- main-header -->
           <header class="main-navigation navbar demo-navigation">
@@ -168,6 +169,7 @@
               <div class="placeholder-div hidden">
                 <span class="placeholder-div-dimensions"></span>
               </div>
+              <div class="alert alert-warning hidden" role="alert"></div>
               <progress max="1" value="0" class="gifshot-progress-bar hidden"></progress>
             </div>
           </div>

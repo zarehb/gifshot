@@ -1,5 +1,8 @@
 (function(window, document) {
   var createGIFButton = document.querySelector('#create-gif'),
+    saveGIFButton = document.querySelector('#save-gif'),
+    downloadAttrSupported = ('download' in document.createElement('a')),
+    warningAlert = document.querySelector('.alert-warning'),
     gifSource = document.querySelector('#GIFSource'),
     gifType = document.querySelector('#GIFType'),
     interval = document.querySelector("#interval"),
@@ -43,6 +46,8 @@
     passedOptions,
     updateCodeBlock = function(obj) {
       obj = obj || {};
+      saveGIFButton.classList.add('hidden');
+
       var targetElem = obj.targetElem,
         selectedOptions = getSelectedOptions(),
         options = (function() {
@@ -89,7 +94,9 @@
       }
     },
     bindEvents = function() {
-      createGIFButton.addEventListener('click', function(e) {
+      createGIFButton.addEventListener('click', function(ev) {
+        ev.preventDefault();
+
         passedOptions = _.merge(_.clone(getSelectedOptions()), {
           'progressCallback': function(captureProgress) {
             gifshotImagePreview.innerHTML = '';
@@ -101,22 +108,33 @@
 
         var method = gifType.value === 'snapshot' ? 'takeSnapShot' : 'createGIF';
 
+        warningAlert.classList.add('hidden');
+        gifshotImagePreview.innerHTML = '';
+
         gifshot[method](passedOptions, function(obj) {
           if (!obj.error) {
             var image = obj.image,
               animatedImage = document.createElement('img');
+
             animatedImage.src = image;
 
             progressBar.classList.add('hidden');
             progressBar.value = 0;
 
             placeholderDiv.classList.add('hidden');
+            warningAlert.classList.add('hidden');
+
             gifshotImagePreview.innerHTML = '';
             gifshotImagePreview.appendChild(animatedImage);
+
+            if(downloadAttrSupported) {
+              saveGIFButton.href = obj.image;
+              saveGIFButton.classList.remove('hidden');
+            }
           } else {
-            console.log('obj.error', obj.error);
-            console.log('obj.errorCode', obj.errorCode);
-            console.log('obj.errorMsg', obj.errorMsg);
+            warningAlert.innerHTML = obj.errorMsg;
+            placeholderDiv.classList.add('hidden');
+            warningAlert.classList.remove('hidden');
           }
         });
       }, false);
