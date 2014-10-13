@@ -3,7 +3,7 @@
 
 // Inspired from https://github.com/sole/gumhelper/blob/master/gumhelper.js
 
-/* Copyright  2014 Yahoo Inc. 
+/* Copyright  2014 Yahoo Inc.
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
  */
 
@@ -120,9 +120,10 @@ define([
         webcamVideoElement = obj.webcamVideoElement,
         videoElement = utils.isElement(existingVideo) ? existingVideo : webcamVideoElement ? webcamVideoElement : document.createElement('video'),
         lastCameraStream = obj.lastCameraStream,
+        crossOrigin = obj.crossOrigin,
         cameraStream;
 
-      videoElement.crossOrigin = 'Anonymous';
+      videoElement.crossOrigin = crossOrigin;
 
       videoElement.autoplay = true;
 

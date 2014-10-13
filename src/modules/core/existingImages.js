@@ -16,6 +16,7 @@ define([
       imagesLength = obj.imagesLength,
       callback = obj.callback,
       options = obj.options,
+      crossOrigin = obj.crossOrigin,
       skipObj = {
         'getUserMedia': true,
         'window.URL': true
@@ -34,7 +35,7 @@ define([
 
     utils.each(images, function(index, currentImage) {
       if (utils.isElement(currentImage)) {
-        currentImage.crossOrigin = 'Anonymous';
+        currentImage.crossOrigin = crossOrigin;
         ag.addFrame(currentImage, options);
         loadedImages += 1;
         if (loadedImages === imagesLength) {
@@ -42,7 +43,7 @@ define([
         }
       } else if (utils.isString(currentImage)) {
         tempImage = document.createElement('img');
-        tempImage.crossOrigin = 'Anonymous';
+        tempImage.crossOrigin = crossOrigin;
         tempImage.onerror = function(e) {
           // If there is an error, ignore the image
           if (imagesLength > 0) {
