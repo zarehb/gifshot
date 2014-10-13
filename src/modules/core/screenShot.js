@@ -12,36 +12,33 @@ define([
   'core/AnimatedGIF'
 ], function(utils, AnimatedGIF) {
   return {
-    getWebcamGIF: function(options, callback) {
+    getGIF: function(options, callback) {
       callback = utils.isFunction(callback) ? callback : function() {}
 
       var canvas = document.createElement('canvas'),
         context,
+        existingImages = options.images,
+        hasExistingImages = !!(existingImages.length),
         videoElement = options.videoElement,
         keepCameraOn = options.keepCameraOn,
         webcamVideoElement = options.webcamVideoElement,
         cameraStream = options.cameraStream,
-        gifWidth = options.gifWidth,
-        gifHeight = options.gifHeight,
+        gifWidth = +options.gifWidth,
+        gifHeight = +options.gifHeight,
         videoWidth = options.videoWidth,
         videoHeight = options.videoHeight,
-        sampleInterval = options.sampleInterval,
-        numWorkers = options.numWorkers,
+        sampleInterval = +options.sampleInterval,
+        numWorkers = +options.numWorkers,
         crop = options.crop,
-        interval = options.interval,
+        interval = +options.interval,
+        waitBetweenFrames = hasExistingImages ? 0 : interval * 1000,
         progressCallback = options.progressCallback,
         savedRenderingContexts = options.savedRenderingContexts,
         saveRenderingContexts = options.saveRenderingContexts,
         renderingContextsToSave = [],
         numFrames = savedRenderingContexts.length ? savedRenderingContexts.length : options.numFrames,
         pendingFrames = numFrames,
-        ag = new AnimatedGIF({
-          'sampleInterval': sampleInterval,
-          'numWorkers': numWorkers,
-          'width': gifWidth,
-          'height': gifHeight,
-          'delay': interval
-        }),
+        ag = new AnimatedGIF(options),
         text = options.text,
         fontWeight = options.fontWeight,
         fontSize = utils.getFontSize(options),
@@ -56,55 +53,88 @@ define([
         sourceWidth = crop ? videoWidth - crop.scaledWidth : 0,
         sourceY = crop ? Math.floor(crop.scaledHeight / 2) : 0,
         sourceHeight = crop ? videoHeight - crop.scaledHeight : 0,
-        captureFrame = function() {
+        captureFrames = function captureFrame() {
           var framesLeft = pendingFrames - 1;
 
           if (savedRenderingContexts.length) {
             context.putImageData(savedRenderingContexts[numFrames - pendingFrames], 0, 0);
           } else {
-            context.drawImage(videoElement,
-              sourceX, sourceY, sourceWidth, sourceHeight,
-              0, 0, gifWidth, gifHeight);
+            drawVideo();
           }
 
-          if (saveRenderingContexts) {
-            renderingContextsToSave.push(context.getImageData(0, 0, gifWidth, gifHeight));
+          function drawVideo() {
+            try {
+              // Makes sure the canvas video heights/widths are in bounds
+              if (sourceWidth > videoWidth) {
+                sourceWidth = videoWidth;
+              }
+              if (sourceHeight > videoHeight) {
+                sourceHeight = videoHeight;
+              }
+              if (sourceX < 0) {
+                sourceX = 0;
+              }
+              if (sourceY < 0) {
+                sourceY = 0;
+              }
+
+              context.drawImage(videoElement,
+                sourceX, sourceY, sourceWidth, sourceHeight,
+                0, 0, gifWidth, gifHeight);
+
+              finishCapture();
+            } catch (e) {
+              // There is a Firefox bug that sometimes throws NS_ERROR_NOT_AVAILABLE and
+              // and IndexSizeError errors when drawing a video element to the canvas
+              if (e.name === 'NS_ERROR_NOT_AVAILABLE') {
+                // Wait 100ms before trying again
+                setTimeout(drawVideo, 100);
+              } else {
+                throw e;
+              }
+            }
           }
 
-          // If there is text to display, make sure to display it on the canvas after the image is drawn
-          if (text) {
-            context.font = font;
-            context.fillStyle = fontColor;
-            context.textAlign = textAlign;
-            context.textBaseline = textBaseline;
-            context.fillText(text, textXCoordinate, textYCoordinate);
-          }
+          function finishCapture() {
+            if (saveRenderingContexts) {
+              renderingContextsToSave.push(context.getImageData(0, 0, gifWidth, gifHeight));
+            }
 
-          ag.addFrameImageData(context.getImageData(0, 0, gifWidth, gifHeight));
+            // If there is text to display, make sure to display it on the canvas after the image is drawn
+            if (text) {
+              context.font = font;
+              context.fillStyle = fontColor;
+              context.textAlign = textAlign;
+              context.textBaseline = textBaseline;
+              context.fillText(text, textXCoordinate, textYCoordinate);
+            }
 
-          pendingFrames = framesLeft;
+            ag.addFrameImageData(context.getImageData(0, 0, gifWidth, gifHeight));
 
-          // Call back with an r value indicating how far along we are in capture
-          progressCallback((numFrames - pendingFrames) / numFrames);
+            pendingFrames = framesLeft;
 
-          if (framesLeft > 0) {
-            setTimeout(captureFrame, interval * 1000); // timeouts are in milliseconds
-          }
+            // Call back with an r value indicating how far along we are in capture
+            progressCallback((numFrames - pendingFrames) / numFrames);
 
-          if (!pendingFrames) {
-            ag.getBase64GIF(function(image) {
-              callback({
-                'error': false,
-                'errorCode': '',
-                'errorMsg': '',
-                'image': image,
-                'cameraStream': cameraStream,
-                'videoElement': videoElement,
-                'webcamVideoElement': webcamVideoElement,
-                'savedRenderingContexts': renderingContextsToSave,
-                'keepCameraOn': keepCameraOn
+            if (framesLeft > 0) {
+              setTimeout(captureFrame, waitBetweenFrames);
+            }
+
+            if (!pendingFrames) {
+              ag.getBase64GIF(function(image) {
+                callback({
+                  'error': false,
+                  'errorCode': '',
+                  'errorMsg': '',
+                  'image': image,
+                  'cameraStream': cameraStream,
+                  'videoElement': videoElement,
+                  'webcamVideoElement': webcamVideoElement,
+                  'savedRenderingContexts': renderingContextsToSave,
+                  'keepCameraOn': keepCameraOn
+                });
               });
-            });
+            }
           }
         };
 
@@ -115,7 +145,13 @@ define([
       canvas.height = gifHeight;
       context = canvas.getContext('2d');
 
-      captureFrame();
+      (function capture() {
+        if (videoElement.currentTime === 0) {
+          setTimeout(capture, 100);
+          return;
+        }
+        captureFrames();
+      }());
     },
     'getCropDimensions': function(obj) {
       var width = obj.videoWidth,

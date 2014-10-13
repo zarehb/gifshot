@@ -14,15 +14,13 @@ define([
     var options = obj.options || {},
       images = options.images,
       video = options.video,
-      numFrames = options.numFrames,
-      interval = options.interval,
-      wait = options.video ? 0 : interval * 10000,
+      numFrames = +options.numFrames,
       cameraStream = obj.cameraStream,
       videoElement = obj.videoElement,
       videoWidth = obj.videoWidth,
       videoHeight = obj.videoHeight,
-      gifWidth = options.gifWidth,
-      gifHeight = options.gifHeight,
+      gifWidth = +options.gifWidth,
+      gifHeight = +options.gifHeight,
       cropDimensions = screenShot.getCropDimensions({
         'videoWidth': videoWidth,
         'videoHeight': videoHeight,
@@ -49,6 +47,7 @@ define([
         'position': 'fixed',
         'opacity': '0'
       });
+
       document.body.appendChild(videoElement);
     }
 
@@ -56,13 +55,11 @@ define([
     // is loaded, so we must manually trigger play after adding it, or the video will be frozen
     videoElement.play();
 
-    setTimeout(function() {
-      screenShot.getWebcamGIF(options, function(obj) {
-        if ((!images || !images.length) && (!video || !video.length)) {
-          stopVideoStreaming(obj);
-        }
-        completeCallback(obj);
-      });
-    }, wait);
+    screenShot.getGIF(options, function(obj) {
+      if ((!images || !images.length) && (!video || !video.length)) {
+        stopVideoStreaming(obj);
+      }
+      completeCallback(obj);
+    });
   };
 });

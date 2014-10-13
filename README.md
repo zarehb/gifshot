@@ -246,10 +246,10 @@ gifshot.takeSnapShot(function(obj) {
 // Note: Passing an existing camera stream will allow you to create another GIF and/or snapshot without
 //	asking for the user's permission to access the camera again if you are not using SSL
 'cameraStream': null,
-// The amount of time (in seconds) to wait between each frame capture of a video
+// The amount of time (in seconds) to wait between each frame capture
 'interval': 0.1,
 // The number of frames to use to create the animated GIF
-// Note: Each frame is captured every 100 milleseconds of a video
+// Note: Each frame is captured every 100 milleseconds of a video and every ms for existing images
 'numFrames': 10,
 // The text that covers the animated GIF
 'text': '',

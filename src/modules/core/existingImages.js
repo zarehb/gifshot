@@ -35,7 +35,7 @@ define([
     utils.each(images, function(index, currentImage) {
       if (utils.isElement(currentImage)) {
         currentImage.crossOrigin = 'Anonymous';
-        ag.addFrame(currentImage, currentImage.src, options);
+        ag.addFrame(currentImage, options);
         loadedImages += 1;
         if (loadedImages === imagesLength) {
           getBase64GIF(ag, callback);
@@ -52,21 +52,22 @@ define([
 
         tempImage.src = currentImage;
 
-        utils.setCSSAttr(tempImage, {
-          'position': 'fixed',
-          'opacity': '0'
-        });
-
-        (function(tempImage, ag, currentImage) {
+        (function(tempImage) {
           tempImage.onload = function() {
-            ag.addFrame(tempImage, currentImage, options);
+            ag.addFrame(tempImage, options);
             utils.removeElement(tempImage);
             loadedImages += 1;
             if (loadedImages === imagesLength) {
               getBase64GIF(ag, callback);
             }
           };
-        }(tempImage, ag, currentImage));
+        }(tempImage));
+
+        utils.setCSSAttr(tempImage, {
+          'position': 'fixed',
+          'opacity': '0'
+        });
+
         document.body.appendChild(tempImage);
       }
     });

@@ -169,7 +169,8 @@ gulp.task('minify', ['concat', 'test', 'copy'], function() {
     .pipe(uglify())
     .pipe(rename('gifshot.min.js'))
     .pipe(insert.prepend(licenseText))
-    .pipe(gulp.dest('build'));
+    .pipe(gulp.dest('build'))
+    .pipe(gulp.dest('demo/js/dependencies'))
 });
 
 // Cleanup task that removes certain temporary files

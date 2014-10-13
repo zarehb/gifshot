@@ -39,7 +39,7 @@ define([
     'isWebCamGIFSupported': isWebCamGIFSupported,
     'isExistingVideoGIFSupported': isExistingVideoGIFSupported,
     'isExistingImagesGIFSupported': isExistingImagesGIFSupported,
-    'VERSION': '0.0.1'
+    'VERSION': '0.1.1'
   };
 
   return gifshot;

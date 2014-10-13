@@ -14,8 +14,6 @@ define([
   'dependencies/gifWriter'
 ], function(utils, frameWorkerCode, NeuQuant, GifWriter) {
   var AnimatedGIF = function(options) {
-    options = utils.isObject(options) ? options : {};
-
     this.canvas = null;
     this.ctx = null;
     this.repeat = 0;
@@ -26,21 +24,13 @@ define([
     this.workers = [];
     this.availableWorkers = [];
     this.generatingGIF = false;
-    this.options = options = utils.mergeOptions(this.defaultOptions, options);
+    this.options = options;
 
     // Constructs and initializes the the web workers appropriately
     this.initializeWebWorkers(options);
   };
 
   AnimatedGIF.prototype = {
-    'defaultOptions': {
-      'width': 160,
-      'height': 120,
-      'delay': 250,
-      'palette': null,
-      'sampleInterval': 10,
-      'numWorkers': 2
-    },
     'workerMethods': frameWorkerCode(),
     'initializeWebWorkers': function(options) {
       var processFrameWorkerCode = NeuQuant.toString() + '(' + frameWorkerCode.toString() + '());',
@@ -71,10 +61,9 @@ define([
 
       this.workerError = workerError;
       this.canvas = document.createElement('canvas');
-      this.canvas.width = options.width;
-      this.canvas.height = options.height;
+      this.canvas.width = options.gifWidth;
+      this.canvas.height = options.gifHeight;
       this.ctx = this.canvas.getContext('2d');
-      this.options.delay = this.options.delay * 0.1;
       this.frames = [];
     },
     // Return a worker for processing a frame
@@ -107,17 +96,17 @@ define([
       // The GIF is not written until we're done with all the frames
       // because they might not be processed in the same order
       var self = this,
-        frames = this.frames,
+        frames = self.frames,
         allDone = frames.every(function(frame) {
           return !frame.beingProcessed && frame.done;
         });
 
-      this.numRenderedFrames++;
-      this.onRenderProgressCallback(this.numRenderedFrames * 0.75 / frames.length);
+      self.numRenderedFrames++;
+      self.onRenderProgressCallback(self.numRenderedFrames * 0.75 / frames.length);
 
       if (allDone) {
-        if (!this.generatingGIF) {
-          this.generateGIF(frames, this.onRenderCompleteCallback);
+        if (!self.generatingGIF) {
+          self.generateGIF(frames, self.onRenderCompleteCallback);
         }
       } else {
         setTimeout(function() {
@@ -205,11 +194,14 @@ define([
           'loop': this.repeat
         },
         options = this.options,
-        height = options.height,
-        width = options.width,
+        interval = options.interval,
+        existingImages = options.images,
+        hasExistingImages = !!(existingImages.length),
+        height = options.gifHeight,
+        width = options.gifWidth,
         gifWriter = new GifWriter(buffer, width, height, gifOptions),
         onRenderProgressCallback = this.onRenderProgressCallback,
-        delay = options.delay,
+        delay = hasExistingImages ? interval * 100 : 0,
         bufferToString,
         gif;
 
@@ -244,15 +236,14 @@ define([
     'setRepeat': function(r) {
       this.repeat = r;
     },
-    'addFrame': function(element, src, gifshotOptions) {
+    'addFrame': function(element, gifshotOptions) {
       gifshotOptions = utils.isObject(gifshotOptions) ? gifshotOptions : {};
 
       var self = this,
-        ctx = this.ctx,
-        options = this.options,
-        width = options.width,
-        height = options.height,
-        imageData,
+        ctx = self.ctx,
+        options = self.options,
+        width = options.gifWidth,
+        height = options.gifHeight,
         gifHeight = gifshotOptions.gifHeight,
         gifWidth = gifshotOptions.gifWidth,
         text = gifshotOptions.text,
@@ -264,13 +255,10 @@ define([
         textBaseline = gifshotOptions.textBaseline,
         textXCoordinate = gifshotOptions.textXCoordinate ? gifshotOptions.textXCoordinate : textAlign === 'left' ? 1 : textAlign === 'right' ? width : width / 2,
         textYCoordinate = gifshotOptions.textYCoordinate ? gifshotOptions.textYCoordinate : textBaseline === 'top' ? 1 : textBaseline === 'center' ? height / 2 : height,
-        font = fontWeight + ' ' + fontSize + ' ' + fontFamily;
+        font = fontWeight + ' ' + fontSize + ' ' + fontFamily,
+        imageData;
 
       try {
-        if (src) {
-          element.src = src;
-        }
-
         ctx.drawImage(element, 0, 0, width, height);
 
         if (text) {
@@ -318,7 +306,7 @@ define([
           }, 0);
         };
 
-      this.startRendering(onRenderComplete);
+      self.startRendering(onRenderComplete);
     },
     'destroyWorkers': function() {
       if (this.workerError) {
