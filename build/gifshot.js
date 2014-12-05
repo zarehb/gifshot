@@ -1182,7 +1182,7 @@ existingImages = function (obj) {
   var images = obj.images, imagesLength = obj.imagesLength, callback = obj.callback, options = obj.options, skipObj = {
       'getUserMedia': true,
       'window.URL': true
-    }, errorObj = error.validate(skipObj), loadedImages = 0, tempImage, ag;
+    }, errorObj = error.validate(skipObj), loadedImages = [], loadedImagesLength = 0, tempImage, ag;
   if (errorObj.error) {
     return callback(errorObj);
   }
@@ -1192,32 +1192,31 @@ existingImages = function (obj) {
       if (options.crossOrigin) {
         currentImage.crossOrigin = options.crossOrigin;
       }
-      ag.addFrame(currentImage, options);
-      loadedImages += 1;
-      if (loadedImages === imagesLength) {
-        getBase64GIF(ag, callback);
+      loadedImages[index] = currentImage;
+      loadedImagesLength += 1;
+      if (loadedImagesLength === imagesLength) {
+        addLoadedImagesToGif();
       }
     } else if (utils.isString(currentImage)) {
       tempImage = document.createElement('img');
       if (options.crossOrigin) {
-        currentImage.crossOrigin = options.crossOrigin;
+        tempImage.crossOrigin = options.crossOrigin;
       }
       tempImage.onerror = function (e) {
-        if (imagesLength > 0) {
-          imagesLength -= 1;
+        if (loadedImages.length > index) {
+          loadedImages[index] = undefined;
         }
-      };
-      tempImage.src = currentImage;
-      (function (tempImage) {
+      }(function (tempImage) {
         tempImage.onload = function () {
-          ag.addFrame(tempImage, options);
-          utils.removeElement(tempImage);
-          loadedImages += 1;
-          if (loadedImages === imagesLength) {
-            getBase64GIF(ag, callback);
+          loadedImages[index] = tempImage;
+          loadedImagesLength += 1;
+          if (loadedImagesLength === imagesLength) {
+            addLoadedImagesToGif();
           }
+          utils.removeElement(tempImage);
         };
       }(tempImage));
+      tempImage.src = currentImage;
       utils.setCSSAttr(tempImage, {
         'position': 'fixed',
         'opacity': '0'
@@ -1225,6 +1224,14 @@ existingImages = function (obj) {
       document.body.appendChild(tempImage);
     }
   });
+  function addLoadedImagesToGif() {
+    utils.each(loadedImages, function (index, loadedImage) {
+      if (loadedImage) {
+        ag.addFrame(loadedImage, options);
+      }
+    });
+    getBase64GIF(ag, callback);
+  }
 };
 screenShot = {
   getGIF: function (options, callback) {

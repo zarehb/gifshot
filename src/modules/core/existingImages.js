@@ -21,7 +21,8 @@ define([
         'window.URL': true
       },
       errorObj = error.validate(skipObj),
-      loadedImages = 0,
+      loadedImages = [ ],
+      loadedImagesLength = 0,
       tempImage,
       ag;
 
@@ -37,35 +38,36 @@ define([
         if (options.crossOrigin) {
           currentImage.crossOrigin = options.crossOrigin;
         }
-        ag.addFrame(currentImage, options);
-        loadedImages += 1;
-        if (loadedImages === imagesLength) {
-          getBase64GIF(ag, callback);
+        loadedImages[index] = currentImage;
+        loadedImagesLength += 1;
+        
+        if (loadedImagesLength === imagesLength) {
+          addLoadedImagesToGif();
         }
       } else if (utils.isString(currentImage)) {
         tempImage = document.createElement('img');
         if (options.crossOrigin) {
-          currentImage.crossOrigin = options.crossOrigin;
+          tempImage.crossOrigin = options.crossOrigin;
         }
         tempImage.onerror = function(e) {
           // If there is an error, ignore the image
-          if (imagesLength > 0) {
-            imagesLength -= 1;
+          if (loadedImages.length > index) {
+            loadedImages[index] = undefined;
           }
         }
 
-        tempImage.src = currentImage;
-
         (function(tempImage) {
           tempImage.onload = function() {
-            ag.addFrame(tempImage, options);
-            utils.removeElement(tempImage);
-            loadedImages += 1;
-            if (loadedImages === imagesLength) {
-              getBase64GIF(ag, callback);
+            loadedImages[index] = tempImage;
+            loadedImagesLength += 1;
+            if (loadedImagesLength === imagesLength) {
+              addLoadedImagesToGif();
             }
+            utils.removeElement(tempImage);
           };
         }(tempImage));
+
+        tempImage.src = currentImage;
 
         utils.setCSSAttr(tempImage, {
           'position': 'fixed',
@@ -75,5 +77,14 @@ define([
         document.body.appendChild(tempImage);
       }
     });
+
+    function addLoadedImagesToGif () {
+      utils.each(loadedImages, function(index, loadedImage) {
+        if (loadedImage) {
+          ag.addFrame(loadedImage, options);
+        }
+      });
+      getBase64GIF(ag, callback);
+    }
   };
 });
