@@ -6,7 +6,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 ;(function(window, document, navigator, undefined) {
-var utils, error, defaultOptions, isSupported, isWebCamGIFSupported, isExistingImagesGIFSupported, isExistingVideoGIFSupported, NeuQuant, processFrameWorker, gifWriter, AnimatedGIF, getBase64GIF, existingImages, screenShot, videoStream, stopVideoStreaming, createAndGetGIF, existingVideo, existingWebcam, createGIF, takeSnapShot, API, _index_;
+var utils, error, defaultOptions, isSupported, isWebCamGIFSupported, isExistingImagesGIFSupported, isExistingVideoGIFSupported, NeuQuant, processFrameWorker, gifWriter, AnimatedGIF, getBase64GIF, existingImages, screenShot, videoStream, stopVideoStreaming, createAndGetGIF, existingVideo, existingWebcam, createGIF, takeSnapShot, API;
 utils = function () {
   var utils = {
     'URL': window.URL || window.webkitURL || window.mozURL || window.msURL,
@@ -1182,7 +1182,7 @@ existingImages = function (obj) {
   var images = obj.images, imagesLength = obj.imagesLength, callback = obj.callback, options = obj.options, skipObj = {
       'getUserMedia': true,
       'window.URL': true
-    }, errorObj = error.validate(skipObj), loadedImages = 0, tempImage, ag;
+    }, errorObj = error.validate(skipObj), loadedImages = [], loadedImagesLength = 0, tempImage, ag;
   if (errorObj.error) {
     return callback(errorObj);
   }
@@ -1192,32 +1192,31 @@ existingImages = function (obj) {
       if (options.crossOrigin) {
         currentImage.crossOrigin = options.crossOrigin;
       }
-      ag.addFrame(currentImage, options);
-      loadedImages += 1;
-      if (loadedImages === imagesLength) {
-        getBase64GIF(ag, callback);
+      loadedImages[index] = currentImage;
+      loadedImagesLength += 1;
+      if (loadedImagesLength === imagesLength) {
+        addLoadedImagesToGif();
       }
     } else if (utils.isString(currentImage)) {
       tempImage = document.createElement('img');
       if (options.crossOrigin) {
-        currentImage.crossOrigin = options.crossOrigin;
+        tempImage.crossOrigin = options.crossOrigin;
       }
       tempImage.onerror = function (e) {
-        if (imagesLength > 0) {
-          imagesLength -= 1;
+        if (loadedImages.length > index) {
+          loadedImages[index] = undefined;
         }
-      };
-      tempImage.src = currentImage;
-      (function (tempImage) {
+      }(function (tempImage) {
         tempImage.onload = function () {
-          ag.addFrame(tempImage, options);
-          utils.removeElement(tempImage);
-          loadedImages += 1;
-          if (loadedImages === imagesLength) {
-            getBase64GIF(ag, callback);
+          loadedImages[index] = tempImage;
+          loadedImagesLength += 1;
+          if (loadedImagesLength === imagesLength) {
+            addLoadedImagesToGif();
           }
+          utils.removeElement(tempImage);
         };
       }(tempImage));
+      tempImage.src = currentImage;
       utils.setCSSAttr(tempImage, {
         'position': 'fixed',
         'opacity': '0'
@@ -1225,6 +1224,14 @@ existingImages = function (obj) {
       document.body.appendChild(tempImage);
     }
   });
+  function addLoadedImagesToGif() {
+    utils.each(loadedImages, function (index, loadedImage) {
+      if (loadedImage) {
+        ag.addFrame(loadedImage, options);
+      }
+    });
+    getBase64GIF(ag, callback);
+  }
 };
 screenShot = {
   getGIF: function (options, callback) {
@@ -1234,6 +1241,7 @@ screenShot = {
         var framesLeft = pendingFrames - 1;
         if (savedRenderingContexts.length) {
           context.putImageData(savedRenderingContexts[numFrames - pendingFrames], 0, 0);
+          finishCapture();
         } else {
           drawVideo();
         }
@@ -1301,7 +1309,7 @@ screenShot = {
     canvas.height = gifHeight;
     context = canvas.getContext('2d');
     (function capture() {
-      if (videoElement.currentTime === 0) {
+      if (!savedRenderingContexts && videoElement.currentTime === 0) {
         setTimeout(capture, 100);
         return;
       }

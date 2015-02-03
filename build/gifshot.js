@@ -6,7 +6,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 ;(function(window, document, navigator, undefined) {
-var utils, error, defaultOptions, isSupported, isWebCamGIFSupported, isExistingImagesGIFSupported, isExistingVideoGIFSupported, NeuQuant, processFrameWorker, gifWriter, AnimatedGIF, getBase64GIF, existingImages, screenShot, videoStream, stopVideoStreaming, createAndGetGIF, existingVideo, existingWebcam, createGIF, takeSnapShot, API, _index_;
+var utils, error, defaultOptions, isSupported, isWebCamGIFSupported, isExistingImagesGIFSupported, isExistingVideoGIFSupported, NeuQuant, processFrameWorker, gifWriter, AnimatedGIF, getBase64GIF, existingImages, screenShot, videoStream, stopVideoStreaming, createAndGetGIF, existingVideo, existingWebcam, createGIF, takeSnapShot, API;
 utils = function () {
   var utils = {
     'URL': window.URL || window.webkitURL || window.mozURL || window.msURL,
@@ -1241,6 +1241,7 @@ screenShot = {
         var framesLeft = pendingFrames - 1;
         if (savedRenderingContexts.length) {
           context.putImageData(savedRenderingContexts[numFrames - pendingFrames], 0, 0);
+          finishCapture();
         } else {
           drawVideo();
         }
@@ -1308,7 +1309,7 @@ screenShot = {
     canvas.height = gifHeight;
     context = canvas.getContext('2d');
     (function capture() {
-      if (videoElement.currentTime === 0) {
+      if (!savedRenderingContexts && videoElement.currentTime === 0) {
         setTimeout(capture, 100);
         return;
       }
