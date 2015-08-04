@@ -58,6 +58,7 @@ define([
 
           if (savedRenderingContexts.length) {
             context.putImageData(savedRenderingContexts[numFrames - pendingFrames], 0, 0);
+
             finishCapture();
           } else {
             drawVideo();
@@ -151,6 +152,7 @@ define([
           setTimeout(capture, 100);
           return;
         }
+
         captureFrames();
       }());
     },
