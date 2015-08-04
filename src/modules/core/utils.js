@@ -92,23 +92,25 @@ define(function() {
             'webm': false
           };
 
-        if (testEl && testEl.canPlayType) {
-          // Check for MPEG-4 support
-          supportObj.mp4 = testEl.canPlayType('video/mp4; codecs="mp4v.20.8"') !== '';
+        try {
+          if (testEl && testEl.canPlayType) {
+            // Check for MPEG-4 support
+            supportObj.mp4 = testEl.canPlayType('video/mp4; codecs="mp4v.20.8"') !== '';
 
-          // Check for h264 support
-          supportObj.h264 = (testEl.canPlayType('video/mp4; codecs="avc1.42E01E"') ||
-            testEl.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"')) !== '';
+            // Check for h264 support
+            supportObj.h264 = (testEl.canPlayType('video/mp4; codecs="avc1.42E01E"') ||
+              testEl.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"')) !== '';
 
-          // Check for Ogv support
-          supportObj.ogv = testEl.canPlayType('video/ogg; codecs="theora"') !== '';
+            // Check for Ogv support
+            supportObj.ogv = testEl.canPlayType('video/ogg; codecs="theora"') !== '';
 
-          // Check for Ogg support
-          supportObj.ogg = testEl.canPlayType('video/ogg; codecs="theora"') !== '';
+            // Check for Ogg support
+            supportObj.ogg = testEl.canPlayType('video/ogg; codecs="theora"') !== '';
 
-          // Check for Webm support
-          supportObj.webm = testEl.canPlayType('video/webm; codecs="vp8, vorbis"') !== -1;
-        }
+            // Check for Webm support
+            supportObj.webm = testEl.canPlayType('video/webm; codecs="vp8, vorbis"') !== -1;
+          }
+        } catch (e) {}
 
         return supportObj;
       }())

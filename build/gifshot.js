@@ -80,12 +80,15 @@ utils = function () {
             'ogg': false,
             'webm': false
           };
-        if (testEl && testEl.canPlayType) {
-          supportObj.mp4 = testEl.canPlayType('video/mp4; codecs="mp4v.20.8"') !== '';
-          supportObj.h264 = (testEl.canPlayType('video/mp4; codecs="avc1.42E01E"') || testEl.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"')) !== '';
-          supportObj.ogv = testEl.canPlayType('video/ogg; codecs="theora"') !== '';
-          supportObj.ogg = testEl.canPlayType('video/ogg; codecs="theora"') !== '';
-          supportObj.webm = testEl.canPlayType('video/webm; codecs="vp8, vorbis"') !== -1;
+        try {
+          if (testEl && testEl.canPlayType) {
+            supportObj.mp4 = testEl.canPlayType('video/mp4; codecs="mp4v.20.8"') !== '';
+            supportObj.h264 = (testEl.canPlayType('video/mp4; codecs="avc1.42E01E"') || testEl.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"')) !== '';
+            supportObj.ogv = testEl.canPlayType('video/ogg; codecs="theora"') !== '';
+            supportObj.ogg = testEl.canPlayType('video/ogg; codecs="theora"') !== '';
+            supportObj.webm = testEl.canPlayType('video/webm; codecs="vp8, vorbis"') !== -1;
+          }
+        } catch (e) {
         }
         return supportObj;
       }()

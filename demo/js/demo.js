@@ -80,6 +80,7 @@
           if (selectedOptions.gifWidth < 60 || selectedOptions.gifHeight < 20) {
             placeholderDivDimensions.classList.add('hidden');
           } else {
+            console.log('placeholderDivDimensions.classList: ', placeholderDivDimensions.classList);
             placeholderDivDimensions.classList.remove('hidden');
           }
           placeholderDiv.classList.remove('hidden');
