@@ -121,6 +121,7 @@ define([
         videoElement = utils.isElement(existingVideo) ? existingVideo : webcamVideoElement ? webcamVideoElement : document.createElement('video'),
         lastCameraStream = obj.lastCameraStream,
         crossOrigin = obj.crossOrigin,
+        options = obj.options,
         cameraStream;
 
       if (crossOrigin) {
@@ -208,7 +209,8 @@ define([
         },
         'lastCameraStream': options.lastCameraStream,
         'webcamVideoElement': webcamVideoElement,
-        'crossOrigin': options.crossOrigin
+        'crossOrigin': options.crossOrigin,
+        'options': options
       });
     },
     'stopVideoStreaming': function(obj) {
