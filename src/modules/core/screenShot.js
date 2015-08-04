@@ -58,6 +58,7 @@ define([
 
           if (savedRenderingContexts.length) {
             context.putImageData(savedRenderingContexts[numFrames - pendingFrames], 0, 0);
+            finishCapture();
           } else {
             drawVideo();
           }
@@ -146,7 +147,7 @@ define([
       context = canvas.getContext('2d');
 
       (function capture() {
-        if (videoElement.currentTime === 0) {
+        if (!savedRenderingContexts && videoElement.currentTime === 0) {
           setTimeout(capture, 100);
           return;
         }
