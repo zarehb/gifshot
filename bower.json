@@ -1,6 +1,5 @@
 {
   "name": "gifshot",
-  "version": "0.1.0",
   "homepage": "https://github.com/yahoo/gifshot",
   "description": "JavaScript library that can create animated GIFs from media streams, videos, or images",
   "main": "./build/gifshot.js",
