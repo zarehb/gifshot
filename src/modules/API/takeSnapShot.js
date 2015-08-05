@@ -21,7 +21,9 @@ define([
     var mergedOptions = utils.mergeOptions(defaultOptions, userOptions),
       options = utils.mergeOptions(mergedOptions, {
         'interval': .1,
-        'numFrames': 1
+        'numFrames': 1,
+        'gifWidth': Math.floor(mergedOptions.gifWidth),
+        'gifHeight': Math.floor(mergedOptions.gifHeight)
       });
 
     createGIF(options, callback);

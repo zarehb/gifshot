@@ -27,6 +27,11 @@ define([
       video = options.video,
       webcamVideoElement = options.webcamVideoElement;
 
+    options = utils.mergeOptions(options, {
+        'gifWidth': Math.floor(options.gifWidth),
+        'gifHeight': Math.floor(options.gifHeight)
+    });
+
     // If the user would like to create a GIF from an existing image(s)
     if (imagesLength) {
       existingImages({

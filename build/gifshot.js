@@ -1615,6 +1615,10 @@ createGIF = function (userOptions, callback) {
     return;
   }
   var options = utils.mergeOptions(defaultOptions, userOptions) || {}, lastCameraStream = userOptions.cameraStream, images = options.images, imagesLength = images ? images.length : 0, video = options.video, webcamVideoElement = options.webcamVideoElement;
+  options = utils.mergeOptions(options, {
+    'gifWidth': Math.floor(options.gifWidth),
+    'gifHeight': Math.floor(options.gifHeight)
+  });
   if (imagesLength) {
     existingImages({
       'images': images,
@@ -1645,7 +1649,9 @@ takeSnapShot = function (userOptions, callback) {
   }
   var mergedOptions = utils.mergeOptions(defaultOptions, userOptions), options = utils.mergeOptions(mergedOptions, {
       'interval': 0.1,
-      'numFrames': 1
+      'numFrames': 1,
+      'gifWidth': Math.floor(mergedOptions.gifWidth),
+      'gifHeight': Math.floor(mergedOptions.gifHeight)
     });
   createGIF(options, callback);
 };
