@@ -3,7 +3,7 @@
 
 // Inspired from https://github.com/sole/Animated_GIF/blob/master/src/Animated_GIF.js
 
-/* Copyright  2014 Yahoo Inc.
+/* Copyright  2015 Yahoo Inc.
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
  */
 
