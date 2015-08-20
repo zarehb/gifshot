@@ -92,16 +92,23 @@ define([
 
       return str;
     },
-    'onFrameFinished': function () {
+    'onFrameFinished': function (progressCallback) {
       // The GIF is not written until we're done with all the frames
       // because they might not be processed in the same order
       var self = this,
         frames = self.frames,
+        options = self.options;
+        hasExistingImages = !!(options.images || []).length;
         allDone = frames.every(function(frame) {
           return !frame.beingProcessed && frame.done;
         });
 
       self.numRenderedFrames++;
+
+      if (hasExistingImages) {
+        progressCallback(self.numRenderedFrames / frames.length);
+      }
+
       self.onRenderProgressCallback(self.numRenderedFrames * 0.75 / frames.length);
 
       if (allDone) {
@@ -118,6 +125,7 @@ define([
     'processFrame': function(position) {
       var AnimatedGifContext = this,
         options = this.options,
+        progressCallback = options.progressCallback,
         sampleInterval = options.sampleInterval,
         frames = this.frames,
         frame,
@@ -135,7 +143,7 @@ define([
 
           AnimatedGifContext.freeWorker(worker);
 
-          AnimatedGifContext.onFrameFinished();
+          AnimatedGifContext.onFrameFinished(progressCallback);
         };
 
       frame = frames[position];

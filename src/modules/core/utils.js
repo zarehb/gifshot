@@ -27,15 +27,15 @@ define(function() {
       callback = callback || utils.noop;
       delay = delay || 0;
 
+      if (!utils.requestAnimFrame) {
+        return setTimeout(callback, delay);
+      }
+
       var start = new Date().getTime(),
           handle = new Object(),
           requestAnimFrame = utils.requestAnimFrame;
 
-      if (!requestAnimFrame) {
-        return setTimeout(callback, delay);
-      }
-
-      function loop(){
+      function loop() {
           var current = new Date().getTime(),
           delta = current - start;
 

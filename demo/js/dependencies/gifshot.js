@@ -18,10 +18,10 @@ utils = function () {
     'requestTimeout': function (callback, delay) {
       callback = callback || utils.noop;
       delay = delay || 0;
-      var start = new Date().getTime(), handle = new Object(), requestAnimFrame = utils.requestAnimFrame;
-      if (!requestAnimFrame) {
+      if (!utils.requestAnimFrame) {
         return setTimeout(callback, delay);
       }
+      var start = new Date().getTime(), handle = new Object(), requestAnimFrame = utils.requestAnimFrame;
       function loop() {
         var current = new Date().getTime(), delta = current - start;
         delta >= delay ? callback.call() : handle.value = requestAnimFrame(loop);
@@ -1042,11 +1042,16 @@ AnimatedGIF = function (utils, frameWorkerCode, NeuQuant, GifWriter) {
       }
       return str;
     },
-    'onFrameFinished': function () {
-      var self = this, frames = self.frames, allDone = frames.every(function (frame) {
-          return !frame.beingProcessed && frame.done;
-        });
+    'onFrameFinished': function (progressCallback) {
+      var self = this, frames = self.frames, options = self.options;
+      hasExistingImages = !!(options.images || []).length;
+      allDone = frames.every(function (frame) {
+        return !frame.beingProcessed && frame.done;
+      });
       self.numRenderedFrames++;
+      if (hasExistingImages) {
+        progressCallback(self.numRenderedFrames / frames.length);
+      }
       self.onRenderProgressCallback(self.numRenderedFrames * 0.75 / frames.length);
       if (allDone) {
         if (!self.generatingGIF) {
@@ -1059,7 +1064,7 @@ AnimatedGIF = function (utils, frameWorkerCode, NeuQuant, GifWriter) {
       }
     },
     'processFrame': function (position) {
-      var AnimatedGifContext = this, options = this.options, sampleInterval = options.sampleInterval, frames = this.frames, frame, worker, done = function (ev) {
+      var AnimatedGifContext = this, options = this.options, progressCallback = options.progressCallback, sampleInterval = options.sampleInterval, frames = this.frames, frame, worker, done = function (ev) {
           var data = ev.data;
           delete frame.data;
           frame.pixels = Array.prototype.slice.call(data.pixels);
@@ -1067,7 +1072,7 @@ AnimatedGIF = function (utils, frameWorkerCode, NeuQuant, GifWriter) {
           frame.done = true;
           frame.beingProcessed = false;
           AnimatedGifContext.freeWorker(worker);
-          AnimatedGifContext.onFrameFinished();
+          AnimatedGifContext.onFrameFinished(progressCallback);
         };
       frame = frames[position];
       if (frame.beingProcessed || frame.done) {

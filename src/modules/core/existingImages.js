@@ -60,6 +60,7 @@ define([
           tempImage.onload = function() {
             loadedImages[index] = tempImage;
             loadedImagesLength += 1;
+
             if (loadedImagesLength === imagesLength) {
               addLoadedImagesToGif();
             }
