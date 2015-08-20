@@ -24,6 +24,7 @@ define([
       lastCameraStream = userOptions.cameraStream,
       images = options.images,
       imagesLength = images ? images.length : 0,
+      progressCallback = userOptions.progressCallback,
       video = options.video,
       webcamVideoElement = options.webcamVideoElement;
 
