@@ -90,7 +90,7 @@ define([
               // and IndexSizeError errors when drawing a video element to the canvas
               if (e.name === 'NS_ERROR_NOT_AVAILABLE') {
                 // Wait 100ms before trying again
-                setTimeout(drawVideo, 100);
+                utils.requestTimeout(drawVideo, 100);
               } else {
                 throw e;
               }
@@ -119,7 +119,7 @@ define([
             progressCallback((numFrames - pendingFrames) / numFrames);
 
             if (framesLeft > 0) {
-              setTimeout(captureFrame, waitBetweenFrames);
+              utils.requestTimeout(captureFrame, waitBetweenFrames);
             }
 
             if (!pendingFrames) {
@@ -149,7 +149,8 @@ define([
 
       (function capture() {
         if (!savedRenderingContexts && videoElement.currentTime === 0) {
-          setTimeout(capture, 100);
+          utils.requestTimeout(capture, 100);
+
           return;
         }
 

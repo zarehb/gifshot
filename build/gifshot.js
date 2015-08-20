@@ -14,6 +14,21 @@ utils = function () {
       var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
       return getUserMedia ? getUserMedia.bind(navigator) : getUserMedia;
     }(),
+    'requestAnimFrame': window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame,
+    'requestTimeout': function (callback, delay) {
+      callback = callback || utils.noop;
+      delay = delay || 0;
+      var start = new Date().getTime(), handle = new Object(), requestAnimFrame = utils.requestAnimFrame;
+      if (!requestAnimFrame) {
+        return setTimeout(callback, delay);
+      }
+      function loop() {
+        var current = new Date().getTime(), delta = current - start;
+        delta >= delay ? callback.call() : handle.value = requestAnimFrame(loop);
+      }
+      handle.value = requestAnimFrame(loop);
+      return handle;
+    },
     'Blob': window.Blob || window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder || window.MSBlobBuilder,
     'btoa': function () {
       var btoa = window.btoa || function (input) {
@@ -1027,25 +1042,24 @@ AnimatedGIF = function (utils, frameWorkerCode, NeuQuant, GifWriter) {
       }
       return str;
     },
-    'onFrameFinished': function (progressCallback) {
+    'onFrameFinished': function () {
       var self = this, frames = self.frames, allDone = frames.every(function (frame) {
           return !frame.beingProcessed && frame.done;
         });
       self.numRenderedFrames++;
-      progressCallback(self.numRenderedFrames / frames.length);
       self.onRenderProgressCallback(self.numRenderedFrames * 0.75 / frames.length);
       if (allDone) {
         if (!self.generatingGIF) {
           self.generateGIF(frames, self.onRenderCompleteCallback);
         }
       } else {
-        setTimeout(function () {
+        utils.requestTimeout(function () {
           self.processNextFrame();
         }, 1);
       }
     },
     'processFrame': function (position) {
-      var AnimatedGifContext = this, options = this.options, progressCallback = options.progressCallback, sampleInterval = options.sampleInterval, frames = this.frames, frame, worker, done = function (ev) {
+      var AnimatedGifContext = this, options = this.options, sampleInterval = options.sampleInterval, frames = this.frames, frame, worker, done = function (ev) {
           var data = ev.data;
           delete frame.data;
           frame.pixels = Array.prototype.slice.call(data.pixels);
@@ -1053,7 +1067,7 @@ AnimatedGIF = function (utils, frameWorkerCode, NeuQuant, GifWriter) {
           frame.done = true;
           frame.beingProcessed = false;
           AnimatedGifContext.freeWorker(worker);
-          AnimatedGifContext.onFrameFinished(progressCallback);
+          AnimatedGifContext.onFrameFinished();
         };
       frame = frames[position];
       if (frame.beingProcessed || frame.done) {
@@ -1154,7 +1168,7 @@ AnimatedGIF = function (utils, frameWorkerCode, NeuQuant, GifWriter) {
     'getBase64GIF': function (completeCallback) {
       var self = this, onRenderComplete = function (gif) {
           self.destroyWorkers();
-          setTimeout(function () {
+          utils.requestTimeout(function () {
             completeCallback(gif);
           }, 0);
         };
@@ -1269,7 +1283,7 @@ screenShot = {
             finishCapture();
           } catch (e) {
             if (e.name === 'NS_ERROR_NOT_AVAILABLE') {
-              setTimeout(drawVideo, 100);
+              utils.requestTimeout(drawVideo, 100);
             } else {
               throw e;
             }
@@ -1290,7 +1304,7 @@ screenShot = {
           pendingFrames = framesLeft;
           progressCallback((numFrames - pendingFrames) / numFrames);
           if (framesLeft > 0) {
-            setTimeout(captureFrame, waitBetweenFrames);
+            utils.requestTimeout(captureFrame, waitBetweenFrames);
           }
           if (!pendingFrames) {
             ag.getBase64GIF(function (image) {
@@ -1316,7 +1330,7 @@ screenShot = {
     context = canvas.getContext('2d');
     (function capture() {
       if (!savedRenderingContexts && videoElement.currentTime === 0) {
-        setTimeout(capture, 100);
+        utils.requestTimeout(capture, 100);
         return;
       }
       captureFrames();
@@ -1362,7 +1376,7 @@ videoStream = {
     } else {
       if (findVideoSizeMethod.attempts < 10) {
         findVideoSizeMethod.attempts += 1;
-        setTimeout(function () {
+        utils.requestTimeout(function () {
           self.findVideoSize(obj);
         }, 200);
       } else {
@@ -1402,7 +1416,7 @@ videoStream = {
       videoElement.src = utils.URL.createObjectURL(cameraStream);
     }
     videoElement.play();
-    setTimeout(function checkLoadedData() {
+    utils.requestTimeout(function checkLoadedData() {
       checkLoadedData.count = checkLoadedData.count || 0;
       if (self.loadedData === true) {
         self.findVideoSize({
@@ -1464,7 +1478,7 @@ videoStream = {
     options = options || {};
     var self = this, noGetUserMediaSupportTimeout, timeoutLength = options.timeout !== undefined ? options.timeout : 0, originalCallback = options.callback, webcamVideoElement = options.webcamVideoElement;
     if (timeoutLength > 0) {
-      noGetUserMediaSupportTimeout = setTimeout(function () {
+      noGetUserMediaSupportTimeout = utils.requestTimeout(function () {
         self.onStreamingTimeout(originalCallback);
       }, 10000);
     }
@@ -1615,7 +1629,7 @@ createGIF = function (userOptions, callback) {
   if (!utils.isFunction(callback)) {
     return;
   }
-  var options = utils.mergeOptions(defaultOptions, userOptions) || {}, lastCameraStream = userOptions.cameraStream, images = options.images, imagesLength = images ? images.length : 0, progressCallback = options.progressCallback || utils.noop, video = options.video, webcamVideoElement = options.webcamVideoElement;
+  var options = utils.mergeOptions(defaultOptions, userOptions) || {}, lastCameraStream = userOptions.cameraStream, images = options.images, imagesLength = images ? images.length : 0, video = options.video, webcamVideoElement = options.webcamVideoElement;
   options = utils.mergeOptions(options, {
     'gifWidth': Math.floor(options.gifWidth),
     'gifHeight': Math.floor(options.gifHeight)

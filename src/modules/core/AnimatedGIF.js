@@ -92,7 +92,7 @@ define([
 
       return str;
     },
-    'onFrameFinished': function (progressCallback) {
+    'onFrameFinished': function () {
       // The GIF is not written until we're done with all the frames
       // because they might not be processed in the same order
       var self = this,
@@ -102,7 +102,6 @@ define([
         });
 
       self.numRenderedFrames++;
-      progressCallback(self.numRenderedFrames / frames.length);
       self.onRenderProgressCallback(self.numRenderedFrames * 0.75 / frames.length);
 
       if (allDone) {
@@ -110,7 +109,7 @@ define([
           self.generateGIF(frames, self.onRenderCompleteCallback);
         }
       } else {
-        setTimeout(function() {
+        utils.requestTimeout(function() {
           self.processNextFrame();
         }, 1);
       }
@@ -119,7 +118,6 @@ define([
     'processFrame': function(position) {
       var AnimatedGifContext = this,
         options = this.options,
-        progressCallback = options.progressCallback,
         sampleInterval = options.sampleInterval,
         frames = this.frames,
         frame,
@@ -137,7 +135,7 @@ define([
 
           AnimatedGifContext.freeWorker(worker);
 
-          AnimatedGifContext.onFrameFinished(progressCallback);
+          AnimatedGifContext.onFrameFinished();
         };
 
       frame = frames[position];
@@ -303,7 +301,7 @@ define([
       var self = this,
         onRenderComplete = function(gif) {
           self.destroyWorkers();
-          setTimeout(function() {
+          utils.requestTimeout(function() {
             completeCallback(gif);
           }, 0);
         };

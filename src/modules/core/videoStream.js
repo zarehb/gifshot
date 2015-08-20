@@ -39,7 +39,7 @@ define([
       } else {
         if (findVideoSizeMethod.attempts < 10) {
           findVideoSizeMethod.attempts += 1;
-          setTimeout(function() {
+          utils.requestTimeout(function() {
             self.findVideoSize(obj);
           }, 200);
         } else {
@@ -88,7 +88,7 @@ define([
 
       videoElement.play();
 
-      setTimeout(function checkLoadedData() {
+      utils.requestTimeout(function checkLoadedData() {
         checkLoadedData.count = checkLoadedData.count || 0;
         if (self.loadedData === true) {
           self.findVideoSize({
@@ -175,7 +175,7 @@ define([
       // So we'll set up this timeout and if nothing happens after a while, we'll
       // conclude that there's no actual getUserMedia support.
       if (timeoutLength > 0) {
-        noGetUserMediaSupportTimeout = setTimeout(function() {
+        noGetUserMediaSupportTimeout = utils.requestTimeout(function() {
           self.onStreamingTimeout(originalCallback);
         }, 10000);
       }

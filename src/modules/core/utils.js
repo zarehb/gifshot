@@ -18,6 +18,34 @@ define(function() {
         navigator.msGetUserMedia);
       return getUserMedia ? getUserMedia.bind(navigator) : getUserMedia;
     }()),
+    'requestAnimFrame': (window.requestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.mozRequestAnimationFrame ||
+      window.oRequestAnimationFrame ||
+      window.msRequestAnimationFrame),
+    'requestTimeout': function (callback, delay) {
+      callback = callback || utils.noop;
+      delay = delay || 0;
+
+      var start = new Date().getTime(),
+          handle = new Object(),
+          requestAnimFrame = utils.requestAnimFrame;
+
+      if (!requestAnimFrame) {
+        return setTimeout(callback, delay);
+      }
+
+      function loop(){
+          var current = new Date().getTime(),
+          delta = current - start;
+
+          delta >= delay ? callback.call() : handle.value = requestAnimFrame(loop);
+      };
+
+      handle.value = requestAnimFrame(loop);
+
+      return handle;
+    },
     'Blob': (window.Blob ||
       window.BlobBuilder ||
       window.WebKitBlobBuilder ||
