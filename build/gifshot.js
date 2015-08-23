@@ -1295,6 +1295,7 @@ screenShot = {
           }
         }
         function finishCapture() {
+          var imageData;
           if (saveRenderingContexts) {
             renderingContextsToSave.push(context.getImageData(0, 0, gifWidth, gifHeight));
           }
@@ -1305,7 +1306,9 @@ screenShot = {
             context.textBaseline = textBaseline;
             context.fillText(text, textXCoordinate, textYCoordinate);
           }
-          ag.addFrameImageData(context.getImageData(0, 0, gifWidth, gifHeight));
+          imageData = context.getImageData(0, 0, gifWidth, gifHeight);
+          console.log('imageData: ', imageData);
+          ag.addFrameImageData(imageData);
           pendingFrames = framesLeft;
           progressCallback((numFrames - pendingFrames) / numFrames);
           if (framesLeft > 0) {
@@ -1334,7 +1337,10 @@ screenShot = {
     canvas.height = gifHeight;
     context = canvas.getContext('2d');
     (function capture() {
-      if (!savedRenderingContexts && videoElement.currentTime === 0) {
+      console.log('savedRenderingContexts.length: ', savedRenderingContexts.length);
+      console.log('videoElement.currentTime: ', videoElement.currentTime);
+      if (!savedRenderingContexts.length && videoElement.currentTime === 0) {
+        console.log('it goes in here');
         utils.requestTimeout(capture, 100);
         return;
       }

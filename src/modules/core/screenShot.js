@@ -98,6 +98,8 @@ define([
           }
 
           function finishCapture() {
+            var imageData;
+
             if (saveRenderingContexts) {
               renderingContextsToSave.push(context.getImageData(0, 0, gifWidth, gifHeight));
             }
@@ -111,7 +113,9 @@ define([
               context.fillText(text, textXCoordinate, textYCoordinate);
             }
 
-            ag.addFrameImageData(context.getImageData(0, 0, gifWidth, gifHeight));
+            imageData = context.getImageData(0, 0, gifWidth, gifHeight);
+
+            ag.addFrameImageData(imageData);
 
             pendingFrames = framesLeft;
 
@@ -148,8 +152,8 @@ define([
       context = canvas.getContext('2d');
 
       (function capture() {
-        if (!savedRenderingContexts && videoElement.currentTime === 0) {
-          utils.requestTimeout(capture, 100);
+        if (!savedRenderingContexts.length && videoElement.currentTime === 0) {
+          utils.requestTimeout(capture, 10);
 
           return;
         }
