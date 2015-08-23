@@ -1307,7 +1307,6 @@ screenShot = {
             context.fillText(text, textXCoordinate, textYCoordinate);
           }
           imageData = context.getImageData(0, 0, gifWidth, gifHeight);
-          console.log('imageData: ', imageData);
           ag.addFrameImageData(imageData);
           pendingFrames = framesLeft;
           progressCallback((numFrames - pendingFrames) / numFrames);
@@ -1337,11 +1336,8 @@ screenShot = {
     canvas.height = gifHeight;
     context = canvas.getContext('2d');
     (function capture() {
-      console.log('savedRenderingContexts.length: ', savedRenderingContexts.length);
-      console.log('videoElement.currentTime: ', videoElement.currentTime);
       if (!savedRenderingContexts.length && videoElement.currentTime === 0) {
-        console.log('it goes in here');
-        utils.requestTimeout(capture, 100);
+        utils.requestTimeout(capture, 10);
         return;
       }
       captureFrames();
@@ -1693,7 +1689,7 @@ API = function (utils, error, defaultOptions, isSupported, isWebCamGIFSupported,
     'isWebCamGIFSupported': isWebCamGIFSupported,
     'isExistingVideoGIFSupported': isExistingVideoGIFSupported,
     'isExistingImagesGIFSupported': isExistingImagesGIFSupported,
-    'VERSION': '0.3.0'
+    'VERSION': '0.3.1'
   };
   return gifshot;
 }(utils, error, defaultOptions, isSupported, isWebCamGIFSupported, isExistingImagesGIFSupported, isExistingVideoGIFSupported, createGIF, takeSnapShot, stopVideoStreaming);
