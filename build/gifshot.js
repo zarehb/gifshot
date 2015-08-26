@@ -1699,7 +1699,7 @@ API = function (utils, error, defaultOptions, isSupported, isWebCamGIFSupported,
     'isWebCamGIFSupported': isWebCamGIFSupported,
     'isExistingVideoGIFSupported': isExistingVideoGIFSupported,
     'isExistingImagesGIFSupported': isExistingImagesGIFSupported,
-    'VERSION': '0.3.1'
+    'VERSION': '0.3.2'
   };
   return gifshot;
 }(utils, error, defaultOptions, isSupported, isWebCamGIFSupported, isExistingImagesGIFSupported, isExistingVideoGIFSupported, createGIF, takeSnapShot, stopVideoStreaming);
