@@ -13,7 +13,7 @@ define([
 ], function(utils, AnimatedGIF) {
   return {
     getGIF: function(options, callback) {
-      callback = utils.isFunction(callback) ? callback : function() {}
+      callback = utils.isFunction(callback) ? callback : utils.noop;
 
       var canvas = document.createElement('canvas'),
         context,
@@ -98,7 +98,13 @@ define([
           }
 
           function finishCapture() {
+            pendingFrames = framesLeft;
+
+            var processedFrames = numFrames - pendingFrames;
             var imageData;
+            var data;
+            var rgba;
+            var isBlackFrame;
 
             if (saveRenderingContexts) {
               renderingContextsToSave.push(context.getImageData(0, 0, gifWidth, gifHeight));
@@ -114,13 +120,19 @@ define([
             }
 
             imageData = context.getImageData(0, 0, gifWidth, gifHeight);
+            data = imageData.data;
+            rgba = data[0] + data[1] + data[2] + data[3];
+            isBlackFrame = rgba === 0;
 
-            ag.addFrameImageData(imageData);
-
-            pendingFrames = framesLeft;
+            if (!isBlackFrame) {
+              ag.addFrameImageData(imageData);
+            } else if (processedFrames === 1 && numFrames === 1) {
+              // If a user has requested only one frame (and it is all black), try getting another frame
+              drawVideo();
+            }
 
             // Call back with an r value indicating how far along we are in capture
-            progressCallback((numFrames - pendingFrames) / numFrames);
+            progressCallback(processedFrames / numFrames);
 
             if (framesLeft > 0) {
               utils.requestTimeout(captureFrame, waitBetweenFrames);
@@ -144,8 +156,8 @@ define([
           }
         };
 
-      numFrames = numFrames !== undefined ? numFrames : 10;
-      interval = interval !== undefined ? interval : 0.1; // In seconds
+      numFrames = numFrames != null ? numFrames : 10;
+      interval = interval != null ? interval : 0.1; // In seconds
 
       canvas.width = gifWidth;
       canvas.height = gifHeight;
@@ -153,7 +165,7 @@ define([
 
       (function capture() {
         if (!savedRenderingContexts.length && videoElement.currentTime === 0) {
-          utils.requestTimeout(capture, 10);
+          utils.requestTimeout(capture, 100);
 
           return;
         }
