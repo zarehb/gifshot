@@ -1,33 +1,39 @@
-// createAndGetGIF.js
-// ==================
+/*
+  createAndGetGIF.js
+  ==================
+*/
 
-/* Copyright  2015 Yahoo Inc.
+/* Copyright  2017 Yahoo Inc. 
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
- */
+*/
 
-define([
-  'core/utils',
-  'core/screenShot',
-  'API/stopVideoStreaming'
-], function(utils, screenShot, stopVideoStreaming) {
-  return function(obj, callback) {
-    var options = obj.options || {},
-      images = options.images,
-      video = options.video,
-      numFrames = +options.numFrames,
-      cameraStream = obj.cameraStream,
-      videoElement = obj.videoElement,
-      videoWidth = obj.videoWidth,
-      videoHeight = obj.videoHeight,
-      gifWidth = +options.gifWidth,
-      gifHeight = +options.gifHeight,
-      cropDimensions = screenShot.getCropDimensions({
-        'videoWidth': videoWidth,
-        'videoHeight': videoHeight,
-        'gifHeight': gifHeight,
-        'gifWidth': gifWidth
-      }),
-      completeCallback = callback;
+// Dependencies
+import utils from './utils';
+import screenShot from './screenShot';
+import stopVideoStreaming from '../API/stopVideoStreaming';
+
+exports createAndGetGIF (obj, callback) => {
+    let options = obj.options || {};
+    const {
+        +gifWidth,
+        +gifHeight,
+        images,
+        +numFrames,
+        video
+    } = options;
+    let {
+        cameraStream,
+        videoElement,
+        videoWidth,
+        videoHeight
+    } = obj;
+    const cropDimensions = screenShot.getCropDimensions({
+        videoWidth: videoWidth,
+        videoHeight: videoHeight,
+        gifHeight: gifHeight,
+        gifWidth: gifWidth
+    });
+    const completeCallback = callback;
 
     options.crop = cropDimensions;
     options.videoElement = videoElement;
@@ -36,30 +42,30 @@ define([
     options.cameraStream = cameraStream;
 
     if (!utils.isElement(videoElement)) {
-      return;
+        return;
     }
 
     videoElement.width = gifWidth + cropDimensions.width;
     videoElement.height = gifHeight + cropDimensions.height;
 
     if (!options.webcamVideoElement) {
-      utils.setCSSAttr(videoElement, {
-        'position': 'fixed',
-        'opacity': '0'
-      });
+        utils.setCSSAttr(videoElement, {
+            position: 'fixed',
+            opacity: '0'
+        });
 
-      document.body.appendChild(videoElement);
+        document.body.appendChild(videoElement);
     }
 
     // Firefox doesn't seem to obey autoplay if the element is not in the DOM when the content
     // is loaded, so we must manually trigger play after adding it, or the video will be frozen
     videoElement.play();
 
-    screenShot.getGIF(options, function(obj) {
-      if ((!images || !images.length) && (!video || !video.length)) {
-        stopVideoStreaming(obj);
-      }
-      completeCallback(obj);
+    screenShot.getGIF(options, (obj) => {
+        if ((!images || !images.length) && (!video || !video.length)) {
+            stopVideoStreaming(obj);
+        }
+
+        completeCallback(obj);
     });
-  };
-});
+};
