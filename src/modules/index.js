@@ -1,21 +1,21 @@
-// index.js
-// ========
+/*
+  index.js
+  ========
+*/
 
-/* Copyright  2015 Yahoo Inc. 
+/* Copyright  2017 Yahoo Inc. 
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
  */
 
-require([
-  'API/API'
-], function(API) {
-  // Universal Module Definition (UMD) to support AMD, CommonJS/Node.js, and plain browser loading
-  if (typeof define === 'function' && define.amd) {
+import API from './API/API';
+
+// Universal Module Definition (UMD) to support AMD, CommonJS/Node.js, and plain browser loading
+if (typeof define === 'function' && define.amd) {
     define([], function() {
-      return API;
+        return API;
     });
-  } else if (typeof exports !== 'undefined') {
+} else if (typeof exports !== 'undefined') {
     module.exports = API;
-  } else {
+} else {
     window.gifshot = API;
-  }
-});
+}

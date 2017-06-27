@@ -1,5 +1,7 @@
-// NeuQuant.js
-// ===========
+/*
+  NeuQuant.js
+  ===========
+*/
 
 /*
  * NeuQuant Neural-Net Quantization Algorithm
@@ -32,9 +34,7 @@
  * Also implement fix in color conversion described at http://stackoverflow.com/questions/16371712/neuquant-js-javascript-color-quantization-hidden-bug-in-js-conversion
  */
 
-define(function() {
-  function NeuQuant() {
-
+export NeuQuant () => {
     var netsize = 256; // number of colours used
 
     // four primes near 500 - assume no image has a length so large
@@ -598,7 +598,4 @@ define(function() {
     exports.process = process;
 
     return exports;
-  };
-
-  return NeuQuant;
-});
+};

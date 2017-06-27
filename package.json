@@ -2,7 +2,7 @@
   "name": "gifshot",
   "version": "0.4.0",
   "description": "JavaScript library that can create animated gifs from video streams (e.g. webcam), existing videos (e.g. mp4), or existing images",
-  "main": "./dist/gifshot.js",
+  "main": "./dist/gifshot",
   "repository": {
     "type": "git",
     "url": "https://github.com/yahoo/gifshot.git"
@@ -13,35 +13,45 @@
     "WebRTC",
     "getUserMedia"
   ],
-  "contributors": [{
-    "name": "Chase West"
-  }, {
-    "name": "Greg Franko"
-  }],
+  "contributors": [
+    {
+      "name": "Chase West"
+    },
+    {
+      "name": "Greg Franko"
+    }
+  ],
   "scripts": {
-    "start": "npm run dev",
-    "dev": "npm test -- -w",
-    "init": "mkdir dist",
-    "clean": "rm -rf dist",
-    "prebuild": "npm run clean && npm run init",
-    "build": "babel ./src -d ./dist --ignore test.js",
-    "pretest": "npm run build",
-    "test": "mocha --compilers js:babel-core/register ./src/**/*.test.js",
-    "test:single": "mocha --compilers js:babel-core/register",
-    "preview": "node demo/server/server.js"
+    "preview": "node demo/server/server.js",
+    "build": "gulp",
+    "watch": "gulp watch",
+    "test": "gulp test"
   },
   "precommit": [
     "build"
   ],
   "devDependencies": {
-    "babel-cli": "^6.16.0",
-    "babel-core": "^6.17.0",
-    "babel-preset-es2015": "^6.16.0",
-    "chai": "^3.5.0",
-    "mocha": "^3.1.2"
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-env": "^1.5.2",
+    "babel-preset-es2015": "^6.24.1",
+    "chai": "^1.9.1",
+    "express": "^4.2.0",
+    "gulp": "^3.8.8",
+    "gulp-babel": "^6.1.2",
+    "gulp-insert": "^0.3.0",
+    "gulp-install": "^0.2.0",
+    "gulp-istanbul": "^0.3.1",
+    "gulp-mocha": "^1.1.0",
+    "gulp-rename": "^1.2.0",
+    "gulp-rimraf": "^0.1.0",
+    "gulp-uglify": "^0.3.0",
+    "jshint": "latest",
+    "precommit-hook": "^1.0.7",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-stream": "^1.21.0"
   },
-  "files": [
-    "dist"
-  ],
+  "engine": {
+    "node": ">= 4.0.0"
+  },
   "license": "MIT"
 }
