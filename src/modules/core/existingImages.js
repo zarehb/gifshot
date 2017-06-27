@@ -3,7 +3,7 @@
   =================
 */
 
-/* Copyright  2017 Yahoo Inc. 
+/* Copyright  2017 Yahoo Inc.
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
 */
 
@@ -12,7 +12,7 @@ import AnimatedGIF from './AnimatedGIF';
 import getBase64GIF from './getBase64GIF';
 import error from './error';
 
-export function existingImages (obj = {}) {
+export default function existingImages (obj = {}) {
     const {
         images,
         imagesLength,
@@ -44,7 +44,7 @@ export function existingImages (obj = {}) {
 
             loadedImages[index] = currentImage;
             loadedImagesLength += 1;
-          
+
           if (loadedImagesLength === imagesLength) {
               addLoadedImagesToGif();
           }

@@ -3,14 +3,14 @@
   =================
 */
 
-/* Copyright  2017 Yahoo Inc. 
+/* Copyright  2017 Yahoo Inc.
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
 */
 
 // Helpers
 const noop = () => {};
 
-module.exports = {
+const defaultOptions = {
     sampleInterval: 10,
     numWorkers: 2,
     gifWidth: 200,
@@ -39,3 +39,5 @@ module.exports = {
     savedRenderingContexts: [],
     crossOrigin: 'Anonymous'
 };
+
+export default defaultOptions;

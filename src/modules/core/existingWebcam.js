@@ -3,7 +3,7 @@
   =================
 */
 
-/* Copyright  2017 Yahoo Inc. 
+/* Copyright  2017 Yahoo Inc.
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
 */
 
@@ -15,7 +15,7 @@ import screenShot from './screenShot';
 import videoStream from './videoStream';
 import isWebCamGIFSupported from '../API/isWebCamGIFSupported';
 
-export function existingWebcam (obj = {}) {
+export default function existingWebcam (obj = {}) {
     const {
         callback,
         lastCameraStream,

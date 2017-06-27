@@ -3,7 +3,7 @@
   ============
 */
 
-/* Copyright  2017 Yahoo Inc. 
+/* Copyright  2017 Yahoo Inc.
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
 */
 
@@ -17,7 +17,7 @@ import existingWebcam from '../core/existingWebcam';
 // Helpers
 const noop = () => {};
 
-export function createGIF (userOptions, callback) {
+export default function createGIF (userOptions, callback) {
     callback = utils.isFunction(userOptions) ? userOptions : callback;
     userOptions = utils.isObject(userOptions) ? userOptions : {};
 

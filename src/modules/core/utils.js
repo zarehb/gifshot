@@ -3,7 +3,7 @@
   ========
 */
 
-/* Copyright  2017 Yahoo Inc. 
+/* Copyright  2017 Yahoo Inc.
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
 */
 
@@ -326,4 +326,4 @@ const utils = {
     webWorkerError: false
 };
 
-module.exports = utils;
+export default utils;

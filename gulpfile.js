@@ -9,6 +9,7 @@ const rollup = require('rollup-stream');
 const uglify = require('gulp-uglify');
 const insert = require('gulp-insert');
 const rename = require('gulp-rename');
+const source = require('vinyl-source-stream');
 const mocha = require('gulp-mocha');
 const istanbul = require('gulp-istanbul');
 const rimraf = require('gulp-rimraf');
@@ -19,30 +20,37 @@ const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
 const licenseText = '/*' + fs.readFileSync('./LICENSE.txt', 'utf8') + '\n*/\n';
 
 gulp.task('build', () => {
-    gulp.src('src/modules/index.js')
-        .pipe(rollup({
-            entry: 'src/modules/index.js',
-            format: 'iife',
-            plugins: [
-                babel({
-                    exclude: 'node_modules/**',
-                    plugins: [
-                        'external-helpers'
-                    ],
-                    presets: [
-                      [
-                          'es2015',
-                          {
-                              'modules': false
-                          }
-                      ]
-                    ]
-                })
-            ]
-        }))
-        .pipe(rename('gifshot.js'))
+    return rollup({
+        entry: 'src/modules/index.js',
+        format: 'iife',
+        onwarn: function (warning) {
+            if (warning.code === 'THIS_IS_UNDEFINED') {
+                return;
+            }
+
+            console.error(warning.message);
+        },
+        plugins: [
+            babel({
+                exclude: 'node_modules/**',
+                plugins: [
+                    'external-helpers'
+                ],
+                presets: [
+                  [
+                      'es2015',
+                      {
+                          'modules': false
+                      }
+                  ]
+                ]
+            })
+        ]
+    })
+        .pipe(gulp.src('src/modules/index.js'))
+        .pipe(source('gifshot.js'))
         .pipe(insert.prepend(licenseText))
-        .pipe(gulp.dest('src'))
+        .pipe(gulp.dest('src'));
 });
 
 // Task that creates a customized gifshot.js file (only including modules that are testable)
@@ -51,7 +59,7 @@ gulp.task('test', ['build'], (cb) => {
     gulp.src('src/gifshot.js')
         .pipe(istanbul()) // Covering files
         .on('finish', () => {
-            gulp.src('tests/gifshot-tests.js')
+            gulp.src('tests/tests.js')
                 .pipe(mocha({
                     reporter: 'nyan'
                 }))
@@ -63,14 +71,12 @@ gulp.task('test', ['build'], (cb) => {
 // Copies src/gifshot.js to dist/gifshot.js
 gulp.task('copy', ['build', 'test'], () => {
     gulp.src(['src/gifshot.js'])
-        .pipe(insert.prepend(licenseText))
-        .pipe(gulp.dest('dist'))
-        .pipe(gulp.dest('demo/js/dependencies'))
+        .pipe(gulp.dest('dist'));
 });
 
 // Uglify.js task that minifies dist/gifshot.js and adds gifshot.min.js to the build folder
 gulp.task('minify', ['build', 'test', 'copy'], () => {
-    gulp.src(['src/gifshot.js'])
+    gulp.src(['dist/gifshot.js'])
         .pipe(uglify())
         .pipe(rename('gifshot.min.js'))
         .pipe(insert.prepend(licenseText))

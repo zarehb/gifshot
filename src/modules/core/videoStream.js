@@ -3,7 +3,7 @@
   ==============
 */
 
-/* Copyright  2017 Yahoo Inc. 
+/* Copyright  2017 Yahoo Inc.
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
 */
 
@@ -16,7 +16,7 @@ const videoStream = {
         width: 640,
         height: 480
     },
-    findVideoSize: function findVideoSizeMethod (obj) {
+    findVideoSize: (obj) => {
         findVideoSizeMethod.attempts = findVideoSizeMethod.attempts || 0;
 
         const self = this;
@@ -258,3 +258,5 @@ const videoStream = {
         }
     }
 };
+
+export default videoStream;

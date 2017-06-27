@@ -3,7 +3,7 @@
   ==============
 */
 
-/* Copyright  2017 Yahoo Inc. 
+/* Copyright  2017 Yahoo Inc.
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
 */
 
@@ -354,4 +354,4 @@ AnimatedGIF.prototype = {
   }
 };
 
-module.exports = AnimatedGIF;
+export default AnimatedGIF;

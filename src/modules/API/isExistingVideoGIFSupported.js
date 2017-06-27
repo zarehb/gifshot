@@ -3,7 +3,7 @@
   ==============================
 */
 
-/* Copyright  2017 Yahoo Inc. 
+/* Copyright  2017 Yahoo Inc.
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
 */
 
@@ -11,7 +11,7 @@
 import utils from '../core/utils';
 import error from '../core/error';
 
-export function isExistingVideoGIFSupported (codecs) {
+export default function isExistingVideoGIFSupported (codecs) {
     let hasValidCodec = false;
 
     if (utils.isArray(codecs) && codecs.length) {

@@ -3,13 +3,13 @@
   =====================
 */
 
-/* Copyright  2017 Yahoo Inc. 
+/* Copyright  2017 Yahoo Inc.
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
 */
 
 import NeuQuant from '../dependencies/NeuQuant';
 
-export function workerCode () {
+export default function workerCode () {
     const self = this;
 
     try {

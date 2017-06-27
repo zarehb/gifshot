@@ -3,7 +3,7 @@
   ==================
 */
 
-/* Copyright  2017 Yahoo Inc. 
+/* Copyright  2017 Yahoo Inc.
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
 */
 
@@ -12,7 +12,7 @@ import utils from './utils';
 import screenShot from './screenShot';
 import stopVideoStreaming from '../API/stopVideoStreaming';
 
-export function createAndGetGIF (obj, callback) {
+export default function createAndGetGIF (obj, callback) {
     let options = obj.options || {};
     const {
         images,

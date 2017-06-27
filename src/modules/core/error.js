@@ -3,14 +3,14 @@
   ========
 */
 
-/* Copyright  2017 Yahoo Inc. 
+/* Copyright  2017 Yahoo Inc.
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
 */
 
 // Dependencies
 import utils from './utils';
 
-module.exports = {
+const error = {
     validate: (skipObj) => {
         skipObj = utils.isObject(skipObj) ? skipObj : {};
 
@@ -81,3 +81,5 @@ module.exports = {
         }
     }
 };
+
+export default error;

@@ -48,7 +48,8 @@
     "jshint": "latest",
     "precommit-hook": "^1.0.7",
     "rollup-plugin-babel": "^2.7.1",
-    "rollup-stream": "^1.21.0"
+    "rollup-stream": "^1.21.0",
+    "vinyl-source-stream": "^1.1.0"
   },
   "engine": {
     "node": ">= 4.0.0"

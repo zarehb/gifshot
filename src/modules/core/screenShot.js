@@ -3,7 +3,7 @@
   =============
 */
 
-/* Copyright  2017 Yahoo Inc. 
+/* Copyright  2017 Yahoo Inc.
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
 */
 
@@ -14,7 +14,7 @@ import AnimatedGIF from './AnimatedGIF';
 // Helpers
 const noop = () => {};
 
-module.exports = {
+const screenShot = {
     getGIF: (options = {}, callback) => {
         callback = utils.isFunction(callback) ? callback : noop;
 
@@ -192,3 +192,5 @@ module.exports = {
         return result;
     }
 };
+
+export default screenShot;
