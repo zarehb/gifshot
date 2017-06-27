@@ -9,7 +9,7 @@
 
 import NeuQuant from '../dependencies/NeuQuant';
 
-export workerCode () => {
+export function workerCode () {
     const self = this;
 
     try {

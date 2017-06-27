@@ -11,7 +11,7 @@ import utils from '../core/utils';
 import defaultOptions from '../core/defaultOptions';
 import createGIF from './createGIF';
 
-export takeSnapShot (userOptions, callback) => {
+export function takeSnapShot (userOptions, callback) {
     callback = utils.isFunction(userOptions) ? userOptions : callback;
     userOptions = utils.isObject(userOptions) ? userOptions : {};
 

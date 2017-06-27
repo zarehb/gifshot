@@ -10,7 +10,7 @@
 import utils from '../core/utils';
 import videoStream from '../core/videoStream';
 
-export stopVideoStreaming (options) => {
+export function stopVideoStreaming (options) {
     options = utils.isObject(options) ? options: {};
 
     videoStream.stopVideoStreaming(options);

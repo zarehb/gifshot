@@ -25,7 +25,7 @@ const utils = {
         return (
             getUserMedia ? getUserMedia.bind(navigator) : getUserMedia
         );
-    }()),
+    })(),
     requestAnimFrame: (
         window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
@@ -45,7 +45,7 @@ const utils = {
         let handle = new Object();
         const requestAnimFrame = utils.requestAnimFrame;
 
-        loop () => {
+        const loop = () => {
             const current = new Date().getTime();
             const delta = current - start;
 
@@ -63,49 +63,50 @@ const utils = {
         window.MozBlobBuilder ||
         window.MSBlobBuilder
     ),
-    btoa: (() => {
-        let btoa = window.btoa || (input) => {
-            let output = '';
-            let i = 0;
-            let l = input.length;
-            let key = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-            let chr1;
-            let chr2;
-            let chr3;
-            let enc1;
-            let enc2;
-            let enc3;
-            let enc4;
+    btoaFallback: (input) => {
+        let output = '';
+        let i = 0;
+        let l = input.length;
+        let key = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+        let chr1;
+        let chr2;
+        let chr3;
+        let enc1;
+        let enc2;
+        let enc3;
+        let enc4;
 
-            while (i < l) {
-                chr1 = input.charCodeAt(i++);
-                chr2 = input.charCodeAt(i++);
-                chr3 = input.charCodeAt(i++);
-                enc1 = chr1 >> 2;
-                enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-                enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-                enc4 = chr3 & 63;
+        while (i < l) {
+            chr1 = input.charCodeAt(i++);
+            chr2 = input.charCodeAt(i++);
+            chr3 = input.charCodeAt(i++);
+            enc1 = chr1 >> 2;
+            enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+            enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+            enc4 = chr3 & 63;
 
-                if (isNaN(chr2)) {
-                    enc3 = enc4 = 64;
-                } else if (isNaN(chr3)) {
-                    enc4 = 64;
-                }
-
-                output = (
-                    output +
-                    key.charAt(enc1) +
-                    key.charAt(enc2) +
-                    key.charAt(enc3) +
-                    key.charAt(enc4)
-                );
+            if (isNaN(chr2)) {
+                enc3 = enc4 = 64;
+            } else if (isNaN(chr3)) {
+                enc4 = 64;
             }
 
-            return output;
-        };
+            output = (
+                output +
+                key.charAt(enc1) +
+                key.charAt(enc2) +
+                key.charAt(enc3) +
+                key.charAt(enc4)
+            );
+        }
 
-        return btoa ? btoa.bind(window) : function() {};
-    }()),
+        return output;
+    },
+    btoa: (() => {
+        let btoa = window.btoa || utils.btoaFallback;
+
+        return btoa ? btoa.bind(window) : utils.noop;
+    })(),
     isObject: (obj) => {
         return (
             obj &&
@@ -195,7 +196,7 @@ const utils = {
             } catch (e) {}
 
             return supportObj;
-        }())
+        })()
     },
     noop: () => {},
     each: (collection, callback) => {
@@ -221,7 +222,7 @@ const utils = {
             }
         }
     },
-    mergeOptions: deepMerge(defaultOptions, userOptions) => {
+    mergeOptions: (defaultOptions, userOptions) => {
         if (!utils.isObject(defaultOptions) || !utils.isObject(userOptions) || !Object.keys) {
           return;
         }
@@ -241,7 +242,7 @@ const utils = {
                 if (!defaultOptions[key]) {
                     newObj[key] = currentUserOption;
                 } else {
-                    newObj[key] = deepMerge(defaultOptions[key], currentUserOption);
+                    newObj[key] = utils.mergeOptions(defaultOptions[key], currentUserOption);
                 }
             }
         });
@@ -297,10 +298,10 @@ const utils = {
             return options.fontSize;
         }
 
-        const text = options.text;
-        const containerWidth = options.gifWidth;
-        const fontSize = parseInt(options.fontSize, 10);
-        const minFontSize = parseInt(options.minFontSize, 10);
+        let text = options.text;
+        let containerWidth = options.gifWidth;
+        let fontSize = parseInt(options.fontSize, 10);
+        let minFontSize = parseInt(options.minFontSize, 10);
         const div = document.createElement('div');
         const span = document.createElement('span');
 

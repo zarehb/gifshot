@@ -29,7 +29,7 @@
 // including animation and compression.  It does not rely on any specific
 // underlying system, so should run in the browser, Node, or Plask.
 
-export gifWriter (buf, width, height, gopts) => {
+export function gifWriter (buf, width, height, gopts) {
     var p = 0;
 
     gopts = gopts === undefined ? {} : gopts;

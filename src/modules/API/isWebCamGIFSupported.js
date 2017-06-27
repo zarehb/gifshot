@@ -9,6 +9,6 @@
 
 import error from '../core/error';
 
-export isWebCamGIFSupported () => {
+export function isWebCamGIFSupported () {
     return error.isValid();
 };

@@ -12,15 +12,15 @@ import utils from './utils';
 import screenShot from './screenShot';
 import stopVideoStreaming from '../API/stopVideoStreaming';
 
-exports createAndGetGIF (obj, callback) => {
+export function createAndGetGIF (obj, callback) {
     let options = obj.options || {};
     const {
-        +gifWidth,
-        +gifHeight,
         images,
-        +numFrames,
         video
     } = options;
+    const gifWidth = Number(options.gifWidth);
+    const gifHeight = Number(options.gifHeight);
+    const numFrames = Number(options.numFrames);
     let {
         cameraStream,
         videoElement,
@@ -28,10 +28,10 @@ exports createAndGetGIF (obj, callback) => {
         videoHeight
     } = obj;
     const cropDimensions = screenShot.getCropDimensions({
-        videoWidth: videoWidth,
-        videoHeight: videoHeight,
-        gifHeight: gifHeight,
-        gifWidth: gifWidth
+        videoWidth,
+        videoHeight,
+        gifHeight,
+        gifWidth
     });
     const completeCallback = callback;
 

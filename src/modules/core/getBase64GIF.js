@@ -7,7 +7,7 @@
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
 */
 
-export getBase64GIF (animatedGifInstance, callback) => {
+export function getBase64GIF (animatedGifInstance, callback) {
     // This is asynchronous, rendered with WebWorkers
     animatedGifInstance.getBase64GIF((image) => {
         callback({

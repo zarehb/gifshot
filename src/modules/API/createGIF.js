@@ -17,7 +17,7 @@ import existingWebcam from '../core/existingWebcam';
 // Helpers
 const noop = () => {};
 
-export createGIF (userOptions, callback) => {
+export function createGIF (userOptions, callback) {
     callback = utils.isFunction(userOptions) ? userOptions : callback;
     userOptions = utils.isObject(userOptions) ? userOptions : {};
 

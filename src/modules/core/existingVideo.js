@@ -13,8 +13,8 @@ import createAndGetGIF from './createAndGetGIF';
 import videoStream from './videoStream';
 import error from './error';
 
-export existingVideo (obj = {}) => {
-    const {
+export function existingVideo (obj = {}) {
+    let {
         callback,
         existingVideo,
         options
@@ -22,7 +22,7 @@ export existingVideo (obj = {}) => {
     const skipObj = {
         getUserMedia: true,
         'window.URL': true
-    },
+    };
     const errorObj = error.validate(skipObj);
     let loadedImages = 0;
     let videoType;

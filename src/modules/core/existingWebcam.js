@@ -15,7 +15,7 @@ import screenShot from './screenShot';
 import videoStream from './videoStream';
 import isWebCamGIFSupported from '../API/isWebCamGIFSupported';
 
-export existingWebcam (obj = {}) => {
+export function existingWebcam (obj = {}) {
     const {
         callback,
         lastCameraStream,

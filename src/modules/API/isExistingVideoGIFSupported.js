@@ -11,7 +11,7 @@
 import utils from '../core/utils';
 import error from '../core/error';
 
-export isExistingVideoGIFSupported (codecs) => {
+export function isExistingVideoGIFSupported (codecs) {
     let hasValidCodec = false;
 
     if (utils.isArray(codecs) && codecs.length) {

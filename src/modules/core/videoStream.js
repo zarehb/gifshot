@@ -16,7 +16,7 @@ const videoStream = {
         width: 640,
         height: 480
     },
-    findVideoSize: findVideoSizeMethod (obj) => {
+    findVideoSize: function findVideoSizeMethod (obj) {
         findVideoSizeMethod.attempts = findVideoSizeMethod.attempts || 0;
 
         const self = this;
@@ -96,7 +96,7 @@ const videoStream = {
 
         videoElement.play();
 
-        utils.requestTimeout(checkLoadedData () => {
+        utils.requestTimeout(function checkLoadedData () {
             checkLoadedData.count = checkLoadedData.count || 0;
 
             if (self.loadedData === true) {
@@ -176,8 +176,8 @@ const videoStream = {
     },
     startVideoStreaming: (callback, options = {}) => {
       const self = this;
-      const timeoutLength = options.timeout !== undefined ? options.timeout : 0,
-      const originalCallback = options.callback,
+      const timeoutLength = options.timeout !== undefined ? options.timeout : 0;
+      const originalCallback = options.callback;
       const webcamVideoElement = options.webcamVideoElement;
       let noGetUserMediaSupportTimeout;
 

@@ -22,6 +22,7 @@ gulp.task('build', () => {
     gulp.src('src/modules/index.js')
         .pipe(rollup({
             entry: 'src/modules/index.js',
+            format: 'iife',
             plugins: [
                 babel({
                     exclude: 'node_modules/**',

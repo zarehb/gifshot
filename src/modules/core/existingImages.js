@@ -12,7 +12,7 @@ import AnimatedGIF from './AnimatedGIF';
 import getBase64GIF from './getBase64GIF';
 import error from './error';
 
-export existingImages (obj = {}) => {
+export function existingImages (obj = {}) {
     const {
         images,
         imagesLength,
@@ -22,7 +22,7 @@ export existingImages (obj = {}) => {
     const skipObj = {
         getUserMedia: true,
         'window.URL': true
-    },
+    };
     const errorObj = error.validate(skipObj);
     let loadedImages = [];
     let loadedImagesLength = 0;
@@ -73,7 +73,7 @@ export existingImages (obj = {}) => {
 
                     utils.removeElement(tempImage);
                 };
-            }(tempImage));
+            })(tempImage);
 
             tempImage.src = currentImage;
 
@@ -86,7 +86,7 @@ export existingImages (obj = {}) => {
         }
     });
 
-    addLoadedImagesToGif () => {
+    function addLoadedImagesToGif () {
         utils.each(loadedImages, (index, loadedImage) => {
             if (loadedImage) {
                 ag.addFrame(loadedImage, options);

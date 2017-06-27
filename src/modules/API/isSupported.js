@@ -10,6 +10,6 @@
 // Dependencies
 import error from '../core/error';
 
-export isSupported () => {
+export function isSupported () {
     return error.isValid();
 };

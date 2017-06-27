@@ -28,13 +28,9 @@ module.exports = {
             fontColor,
             fontFamily,
             fontWeight,
-            +gifWidth,
-            +gifHeight,
-            +interval,
             keepCameraOn,
             numWorkers,
             progressCallback,
-            +sampleInterval,
             saveRenderingContexts,
             savedRenderingContexts,
             text,
@@ -45,20 +41,24 @@ module.exports = {
             videoWidth,
             webcamVideoElement
         } = options;
-        const waitBetweenFrames = hasExistingImages ? 0 : interval * 1000;
+        let gifWidth = Number(options.gifWidth);
+        let gifHeight = Number(options.gifHeight);
+        let interval = Number(options.interval);
+        let sampleInterval = Number(options.sampleInterval);
+        let waitBetweenFrames = hasExistingImages ? 0 : interval * 1000;
         let renderingContextsToSave = [];
-        const numFrames = savedRenderingContexts.length ? savedRenderingContexts.length : options.numFrames;
+        let numFrames = savedRenderingContexts.length ? savedRenderingContexts.length : options.numFrames;
         let pendingFrames = numFrames;
         let ag = new AnimatedGIF(options);
-        const fontSize = utils.getFontSize(options);
-        const textXCoordinate = options.textXCoordinate ? options.textXCoordinate : textAlign === 'left' ? 1 : textAlign === 'right' ? gifWidth : gifWidth / 2;
-        const textYCoordinate = options.textYCoordinate ? options.textYCoordinate : textBaseline === 'top' ? 1 : textBaseline === 'center' ? gifHeight / 2 : gifHeight;
-        const font = fontWeight + ' ' + fontSize + ' ' + fontFamily;
-        const sourceX = crop ? Math.floor(crop.scaledWidth / 2) : 0;
-        const sourceWidth = crop ? videoWidth - crop.scaledWidth : 0;
-        const sourceY = crop ? Math.floor(crop.scaledHeight / 2) : 0;
-        const sourceHeight = crop ? videoHeight - crop.scaledHeight : 0;
-        const captureFrames = captureFrame () => {
+        let fontSize = utils.getFontSize(options);
+        let textXCoordinate = options.textXCoordinate ? options.textXCoordinate : textAlign === 'left' ? 1 : textAlign === 'right' ? gifWidth : gifWidth / 2;
+        let textYCoordinate = options.textYCoordinate ? options.textYCoordinate : textBaseline === 'top' ? 1 : textBaseline === 'center' ? gifHeight / 2 : gifHeight;
+        let font = fontWeight + ' ' + fontSize + ' ' + fontFamily;
+        let sourceX = crop ? Math.floor(crop.scaledWidth / 2) : 0;
+        let sourceWidth = crop ? videoWidth - crop.scaledWidth : 0;
+        let sourceY = crop ? Math.floor(crop.scaledHeight / 2) : 0;
+        let sourceHeight = crop ? videoHeight - crop.scaledHeight : 0;
+        const captureFrames = () => {
             const framesLeft = pendingFrames - 1;
 
             if (savedRenderingContexts.length) {
@@ -69,7 +69,7 @@ module.exports = {
                 drawVideo();
             }
 
-            drawVideo () => {
+            function drawVideo () {
                 try {
                     // Makes sure the canvas video heights/widths are in bounds
                     if (sourceWidth > videoWidth) {
@@ -103,7 +103,7 @@ module.exports = {
                 }
             }
 
-          finishCapture () => {
+          function finishCapture () {
               let imageData;
 
               if (saveRenderingContexts) {
@@ -157,14 +157,14 @@ module.exports = {
       canvas.height = gifHeight;
       context = canvas.getContext('2d');
 
-      (capture () => {
-          if (!savedRenderingContexts.length && videoElement.currentTime === 0) {
-              utils.requestTimeout(capture, 10);
+      (function capture() {
+        if (!savedRenderingContexts.length && videoElement.currentTime === 0) {
+          utils.requestTimeout(capture, 100);
 
-              return;
-          }
+          return;
+        }
 
-          captureFrames();
+        captureFrames();
       }());
     },
     getCropDimensions: (obj = {}) => {

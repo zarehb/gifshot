@@ -10,7 +10,7 @@
 // Dependencies
 import error from '../core/error';
 
-export isSupported () => {
+export function isSupported () {
     const options = {
         getUserMedia: true
     };

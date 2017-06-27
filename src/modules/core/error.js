@@ -11,10 +11,10 @@
 import utils from './utils';
 
 module.exports = {
-    validate: validate (skipObj) => {
+    validate: (skipObj) => {
         skipObj = utils.isObject(skipObj) ? skipObj : {};
 
-        const errorObj = {};
+        let errorObj = {};
 
         utils.each(error.validators, (indece, currentValidator) => {
             const errorCode = currentValidator.errorCode;
