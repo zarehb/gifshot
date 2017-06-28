@@ -16,10 +16,9 @@ const videoStream = {
         width: 640,
         height: 480
     },
-    findVideoSize: (obj) => {
+    findVideoSize: function findVideoSizeMethod(obj) {
         findVideoSizeMethod.attempts = findVideoSizeMethod.attempts || 0;
 
-        const self = this;
         const {
             cameraStream,
             completedCallback,
@@ -31,7 +30,7 @@ const videoStream = {
         }
 
         if (videoElement.videoWidth > 0 && videoElement.videoHeight > 0) {
-            videoElement.removeEventListener('loadeddata', self.findVideoSize);
+            videoElement.removeEventListener('loadeddata', videoStream.findVideoSize);
 
             completedCallback({
                 videoElement: videoElement,
@@ -44,14 +43,14 @@ const videoStream = {
                 findVideoSizeMethod.attempts += 1;
 
                 utils.requestTimeout(function() {
-                    self.findVideoSize(obj);
+                    videoStream.findVideoSize(obj);
                 }, 200);
             } else {
                 completedCallback({
                     videoElement: videoElement,
                     cameraStream: cameraStream,
-                    videoWidth: self.defaultVideoDimensions.width,
-                    videoHeight: self.defaultVideoDimensions.height
+                    videoWidth: videoStream.defaultVideoDimensions.width,
+                    videoHeight: videoStream.defaultVideoDimensions.height
                 });
             }
         }
@@ -68,7 +67,6 @@ const videoStream = {
         }
     },
     stream: (obj) => {
-        const self = this;
         const existingVideo = utils.isArray(obj.existingVideo) ? obj.existingVideo[0] : obj.existingVideo;
         const {
             cameraStream,
@@ -99,19 +97,19 @@ const videoStream = {
         utils.requestTimeout(function checkLoadedData () {
             checkLoadedData.count = checkLoadedData.count || 0;
 
-            if (self.loadedData === true) {
-                self.findVideoSize({
+            if (videoStream.loadedData === true) {
+                videoStream.findVideoSize({
                     videoElement,
                     cameraStream,
                     completedCallback
                 });
 
-                self.loadedData = false;
+                videoStream.loadedData = false;
             } else {
                 checkLoadedData.count += 1;
 
                 if (checkLoadedData.count > 10) {
-                    self.findVideoSize({
+                    videoStream.findVideoSize({
                         videoElement,
                         cameraStream,
                         completedCallback
@@ -123,7 +121,6 @@ const videoStream = {
         }, 100);
     },
     startStreaming: (obj) => {
-        const self = this;
         const errorCallback = utils.isFunction(obj.error) ? obj.error : utils.noop;
         const streamedCallback = utils.isFunction(obj.streamed) ? obj.streamed : utils.noop;
         const completedCallback = utils.isFunction(obj.completed) ? obj.completed : utils.noop;
@@ -145,17 +142,17 @@ const videoStream = {
         videoElement.loop = true;
         videoElement.muted = true;
         videoElement.addEventListener('loadeddata', (event) => {
-            self.loadedData = true;
+            videoStream.loadedData = true;
         });
 
         if (existingVideo) {
-            self.stream({
+            videoStream.stream({
                 videoElement,
                 existingVideo,
                 completedCallback
             });
         } else if (lastCameraStream) {
-            self.stream({
+            videoStream.stream({
                 videoElement,
                 cameraStream: lastCameraStream,
                 streamedCallback,
@@ -165,7 +162,7 @@ const videoStream = {
             utils.getUserMedia({
                 video: true
             }, function(stream) {
-                self.stream({
+                videoStream.stream({
                     videoElement: videoElement,
                     cameraStream: stream,
                     streamedCallback: streamedCallback,
@@ -175,7 +172,6 @@ const videoStream = {
         }
     },
     startVideoStreaming: (callback, options = {}) => {
-      const self = this;
       const timeoutLength = options.timeout !== undefined ? options.timeout : 0;
       const originalCallback = options.callback;
       const webcamVideoElement = options.webcamVideoElement;
@@ -188,11 +184,11 @@ const videoStream = {
       // conclude that there's no actual getUserMedia support.
       if (timeoutLength > 0) {
           noGetUserMediaSupportTimeout = utils.requestTimeout(() => {
-              self.onStreamingTimeout(originalCallback);
+              videoStream.onStreamingTimeout(originalCallback);
           }, 10000);
       }
 
-      this.startStreaming({
+      videoStream.startStreaming({
           error: () => {
               originalCallback({
                   error: true,

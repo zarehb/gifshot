@@ -36,6 +36,7 @@ const AnimatedGIF = function (options) {
 AnimatedGIF.prototype = {
   'workerMethods': frameWorkerCode(),
   'initializeWebWorkers': (options) => {
+      const self = this;
       const processFrameWorkerCode = NeuQuant.toString() + '(' + frameWorkerCode.toString() + '());';
       let webWorkerObj;
       let objectUrl;
@@ -53,12 +54,12 @@ AnimatedGIF.prototype = {
               objectUrl = webWorkerObj.objectUrl;
               webWorker = webWorkerObj.worker;
 
-              this.workers.push({
+              self.workers.push({
                   worker: webWorker,
                   objectUrl: objectUrl
               });
 
-              this.availableWorkers.push(webWorker);
+              self.availableWorkers.push(webWorker);
           } else {
               workerError = webWorkerObj;
               utils.webWorkerError = !!(webWorkerObj);

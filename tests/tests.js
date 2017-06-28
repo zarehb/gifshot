@@ -1,12 +1,11 @@
 import chai from 'chai';
-import gifshot from '../dist/gifshot.min.js';
+import * as gifshot from '../dist/gifshot.min.js';
 
 const expect = chai.expect;
 const gifshotUtils = gifshot.utils;
 
 describe('gifshot', () => {
   describe('#utils', () => {
-
     it('should check gifshotUtils is an object', () => {
         expect(gifshotUtils).not.to.equal(undefined);
     });

@@ -30,6 +30,19 @@
   "precommit": [
     "build"
   ],
+  "babel": {
+      "plugins": [
+          "external-helpers"
+      ],
+      "presets": [
+          [
+              "es2015",
+              {
+                  "modules": false
+              }
+          ]
+      ]
+  },
   "devDependencies": {
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-preset-env": "^1.5.2",

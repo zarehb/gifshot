@@ -21,41 +21,21 @@ const licenseText = '/*' + fs.readFileSync('./LICENSE.txt', 'utf8') + '\n*/\n';
 
 gulp.task('build', () => {
     return rollup({
-        entry: 'src/modules/index.js',
+        entry: './src/modules/index.js',
         format: 'iife',
-        onwarn: function (warning) {
-            if (warning.code === 'THIS_IS_UNDEFINED') {
-                return;
-            }
-
-            console.error(warning.message);
-        },
         plugins: [
-            babel({
-                exclude: 'node_modules/**',
-                plugins: [
-                    'external-helpers'
-                ],
-                presets: [
-                  [
-                      'es2015',
-                      {
-                          'modules': false
-                      }
-                  ]
-                ]
-            })
+            babel()
         ]
     })
-        .pipe(gulp.src('src/modules/index.js'))
+        .pipe(gulp.src('./src/modules/index.js'))
         .pipe(source('gifshot.js'))
         .pipe(insert.prepend(licenseText))
-        .pipe(gulp.dest('src'));
+        .pipe(gulp.dest('./src'));
 });
 
 // Task that creates a customized gifshot.js file (only including modules that are testable)
 // and runs the Mocha unit tests and Instanbul test coverage
-gulp.task('test', ['build'], (cb) => {
+gulp.task('test', (cb) => {
     gulp.src('src/gifshot.js')
         .pipe(istanbul()) // Covering files
         .on('finish', () => {
@@ -69,35 +49,36 @@ gulp.task('test', ['build'], (cb) => {
 });
 
 // Copies src/gifshot.js to dist/gifshot.js
-gulp.task('copy', ['build', 'test'], () => {
-    gulp.src(['src/gifshot.js'])
-        .pipe(gulp.dest('dist'));
+gulp.task('copy', () => {
+    gulp.src(['./src/gifshot.js'])
+        .pipe(gulp.dest('dist'))
+        .pipe(gulp.dest('./demo/js/dependencies/'));
 });
 
 // Uglify.js task that minifies dist/gifshot.js and adds gifshot.min.js to the build folder
-gulp.task('minify', ['build', 'test', 'copy'], () => {
+gulp.task('minify', () => {
     gulp.src(['dist/gifshot.js'])
         .pipe(uglify())
         .pipe(rename('gifshot.min.js'))
         .pipe(insert.prepend(licenseText))
-        .pipe(gulp.dest('dist'))
-        .pipe(gulp.dest('demo/js/dependencies'))
+        .pipe(gulp.dest('./dist'))
+        .pipe(gulp.dest('./demo/js/dependencies'))
 });
 
 // Cleanup task that removes certain temporary files
-gulp.task('cleanup', ['build', 'test', 'copy', 'minify'], () => {
-    gulp.src(['src/gifshot.js'], {
+gulp.task('cleanup', () => {
+    gulp.src(['./src/gifshot.js'], {
         read: false
     })
         .pipe(rimraf());
 });
 
 // The default build task (called when you run `gulp`)
-gulp.task('default', ['build', 'test', 'copy', 'minify', 'cleanup']);
+gulp.task('default', ['build', 'copy', 'minify', 'cleanup']);
 
 // The watch task that runs the default task on any gifshot module file changes
 gulp.task('watch', () => {
-    const watcher = gulp.watch('src/modules/**/*.js', ['default']);
+    const watcher = gulp.watch('./src/modules/**/*.js', ['default']);
 
     watcher.on('change', (event) => {
         console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');

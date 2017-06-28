@@ -168,12 +168,10 @@ const screenShot = {
       }());
     },
     getCropDimensions: (obj = {}) => {
-        const {
-            gifHeight,
-            gifWidth,
-            videoHeight,
-            videoWidth
-        } = obj;
+        const width = obj.videoWidth;
+        const height = obj.videoHeight;
+        const gifWidth = obj.gifWidth;
+        const gifHeight = obj.gifHeight;
         const result = {
             width: 0,
             height: 0,

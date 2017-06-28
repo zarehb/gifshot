@@ -7,7 +7,7 @@
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
  */
 
-import * as API from './API/API';
+import {API} from './API/API';
 
 // Universal Module Definition (UMD) to support AMD, CommonJS/Node.js, and plain browser loading
 if (typeof define === 'function' && define.amd) {

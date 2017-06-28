@@ -14,6 +14,7 @@ import stopVideoStreaming from '../API/stopVideoStreaming';
 
 export default function createAndGetGIF (obj, callback) {
     let options = obj.options || {};
+
     const {
         images,
         video
