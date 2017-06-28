@@ -382,6 +382,7 @@ var defaultOptions = {
     gifHeight: 200,
     interval: 0.1,
     numFrames: 10,
+    frameDuration: 0.1,
     keepCameraOn: false,
     images: [],
     video: null,
@@ -1740,6 +1741,7 @@ AnimatedGIF.prototype = {
         var options = this.options;
         var interval = options.interval;
 
+        var frameDuration = options.frameDuration * 100;
         var existingImages = options.images;
         var hasExistingImages = !!existingImages.length;
         var height = options.gifHeight;
@@ -1757,10 +1759,12 @@ AnimatedGIF.prototype = {
 
             onRenderProgressCallback(0.75 + 0.25 * frame.position * 1.0 / frames.length);
 
-            gifWriter$$1.addFrame(0, 0, width, height, frame.pixels, {
-                palette: framePalette,
-                delay: delay
-            });
+            for (var i = 0; i < frameDuration; i++) {
+                gifWriter$$1.addFrame(0, 0, width, height, frame.pixels, {
+                    palette: framePalette,
+                    delay: delay
+                });
+            }
         });
 
         gifWriter$$1.end();
@@ -2268,6 +2272,9 @@ var videoStream = {
             if (utils.isString(existingVideo)) {
                 videoElement.src = existingVideo;
                 videoElement.innerHTML = '<source src="' + existingVideo + '" type="video/' + utils.getExtension(existingVideo) + '" />';
+            } else if (existingVideo instanceof Blob) {
+                videoElement.src = utils.URL.createObjectURL(existingVideo);
+                videoElement.innerHTML = '<source src="' + existingVideo + '" type="' + existingVideo.type + '" />';
             }
         } else if (videoElement.mozSrcObject) {
             videoElement.mozSrcObject = cameraStream;
@@ -2561,7 +2568,11 @@ function existingVideo() {
         }
     } else if (utils.isArray(existingVideo)) {
         utils.each(existingVideo, function (iterator, videoSrc) {
-            videoType = videoSrc.substr(videoSrc.lastIndexOf('.') + 1, videoSrc.length);
+            if (videoSrc instanceof Blob) {
+                videoType = videoSrc.type.substr(videoSrc.type.lastIndexOf('/') + 1, videoSrc.length);
+            } else {
+                videoType = videoSrc.substr(videoSrc.lastIndexOf('.') + 1, videoSrc.length);
+            }
 
             if (utils.isSupported.videoCodecs[videoType]) {
                 existingVideo = videoSrc;

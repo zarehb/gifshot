@@ -92,7 +92,7 @@ gulp.task('minify', () => {
 
 // The default build task (called when you run `gulp`)
 gulp.task('default', function () {
-    runSequence('build', 'iife', 'copy', 'minify');
+    runSequence('build', 'iife', 'test', 'copy', 'minify');
 });
 
 // The watch task that runs the default task on any gifshot module file changes
