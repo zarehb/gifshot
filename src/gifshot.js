@@ -2261,7 +2261,7 @@ var videoStream = {
 
                 utils.requestTimeout(function () {
                     videoStream.findVideoSize(obj);
-                }, 200);
+                }, 400);
             } else {
                 completedCallback({
                     videoElement: videoElement,
@@ -2311,33 +2311,31 @@ var videoStream = {
 
         videoElement.play();
 
-        utils.requestTimeout(function () {
-            utils.requestTimeout(function checkLoadedData() {
-                checkLoadedData.count = checkLoadedData.count || 0;
+        utils.requestTimeout(function checkLoadedData() {
+            checkLoadedData.count = checkLoadedData.count || 0;
 
-                if (videoStream.loadedData === true) {
+            if (videoStream.loadedData === true) {
+                videoStream.findVideoSize({
+                    videoElement: videoElement,
+                    cameraStream: cameraStream,
+                    completedCallback: completedCallback
+                });
+
+                videoStream.loadedData = false;
+            } else {
+                checkLoadedData.count += 1;
+
+                if (checkLoadedData.count > 10) {
                     videoStream.findVideoSize({
                         videoElement: videoElement,
                         cameraStream: cameraStream,
                         completedCallback: completedCallback
                     });
-
-                    videoStream.loadedData = false;
                 } else {
-                    checkLoadedData.count += 1;
-
-                    if (checkLoadedData.count > 10) {
-                        videoStream.findVideoSize({
-                            videoElement: videoElement,
-                            cameraStream: cameraStream,
-                            completedCallback: completedCallback
-                        });
-                    } else {
-                        checkLoadedData();
-                    }
+                    checkLoadedData();
                 }
-            }, 100);
-        }, 400);
+            }
+        }, 0);
     },
     startStreaming: function startStreaming(obj) {
         var errorCallback = utils.isFunction(obj.error) ? obj.error : utils.noop;
@@ -2777,7 +2775,7 @@ var API = {
   'isWebCamGIFSupported': isWebCamGIFSupported,
   'isExistingVideoGIFSupported': isExistingVideoGIFSupported,
   'isExistingImagesGIFSupported': isSupported$1,
-  'VERSION': '0.4.2'
+  'VERSION': '0.4.3'
 };
 
 /*

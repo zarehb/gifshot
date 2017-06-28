@@ -12,7 +12,6 @@ const uglify = require('gulp-uglify');
 const insert = require('gulp-insert');
 const rename = require('gulp-rename');
 const mocha = require('gulp-mocha');
-const istanbul = require('gulp-istanbul');
 const fs = require('fs');
 
 // Helpers
@@ -59,16 +58,11 @@ gulp.task('iife', function () {
 
 // Task that runs the Mocha unit tests and Instanbul test coverage
 gulp.task('test', function (cb) {
-    gulp.src('src/gifshot.js')
-        .pipe(istanbul()) // Covering files
-        .on('finish', function () {
-            gulp.src('tests/tests.js')
-                .pipe(mocha({
-                    reporter: 'nyan'
-                }))
-                .pipe(istanbul.writeReports()) // Creating the reports after tests runned
-                .on('end', cb);
-        });
+    gulp.src('tests/tests.js')
+        .pipe(mocha({
+            reporter: 'nyan'
+        }))
+        .on('end', cb);
 });
 
 // Copies src/gifshot.js to dist/gifshot.js

@@ -44,7 +44,7 @@ const videoStream = {
 
                 utils.requestTimeout(function() {
                     videoStream.findVideoSize(obj);
-                }, 200);
+                }, 400);
             } else {
                 completedCallback({
                     videoElement: videoElement,
@@ -97,33 +97,31 @@ const videoStream = {
 
         videoElement.play();
 
-        utils.requestTimeout(function () {
-            utils.requestTimeout(function checkLoadedData () {
-                checkLoadedData.count = checkLoadedData.count || 0;
+        utils.requestTimeout(function checkLoadedData () {
+            checkLoadedData.count = checkLoadedData.count || 0;
 
-                if (videoStream.loadedData === true) {
+            if (videoStream.loadedData === true) {
+                videoStream.findVideoSize({
+                    videoElement,
+                    cameraStream,
+                    completedCallback
+                });
+
+                videoStream.loadedData = false;
+            } else {
+                checkLoadedData.count += 1;
+
+                if (checkLoadedData.count > 10) {
                     videoStream.findVideoSize({
                         videoElement,
                         cameraStream,
                         completedCallback
                     });
-
-                    videoStream.loadedData = false;
                 } else {
-                    checkLoadedData.count += 1;
-
-                    if (checkLoadedData.count > 10) {
-                        videoStream.findVideoSize({
-                            videoElement,
-                            cameraStream,
-                            completedCallback
-                        });
-                    } else {
-                        checkLoadedData();
-                    }
+                    checkLoadedData();
                 }
-            }, 100);
-          }, 400);
+            }
+        }, 0);
     },
     startStreaming: (obj) => {
         const errorCallback = utils.isFunction(obj.error) ? obj.error : utils.noop;
