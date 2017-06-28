@@ -1107,16 +1107,15 @@ function workerCode() {
             return rgb;
         },
         componentizedPaletteToArray: function componentizedPaletteToArray(paletteRGB) {
-            var paletteArray = [];
-            var i = void 0;
-            var r = void 0;
-            var g = void 0;
-            var b = void 0;
+            paletteRGB = paletteRGB || [];
 
-            for (i = 0; i < paletteRGB.length; i += 3) {
-                r = paletteRGB[i];
-                g = paletteRGB[i + 1];
-                b = paletteRGB[i + 2];
+            var paletteArray = [];
+
+            for (var i = 0; i < paletteRGB.length; i += 3) {
+                var r = paletteRGB[i];
+                var g = paletteRGB[i + 1];
+                var b = paletteRGB[i + 2];
+
                 paletteArray.push(r << 16 | g << 8 | b);
             }
 
@@ -1131,15 +1130,12 @@ function workerCode() {
             var numberPixels = width * height;
             var indexedPixels = new Uint8Array(numberPixels);
             var k = 0;
-            var i = void 0;
-            var r = void 0;
-            var g = void 0;
-            var b = void 0;
 
-            for (i = 0; i < numberPixels; i++) {
-                r = rgbComponents[k++];
-                g = rgbComponents[k++];
-                b = rgbComponents[k++];
+            for (var i = 0; i < numberPixels; i++) {
+                var r = rgbComponents[k++];
+                var g = rgbComponents[k++];
+                var b = rgbComponents[k++];
+
                 indexedPixels[i] = nq.map(r, g, b);
             }
 
@@ -1148,12 +1144,14 @@ function workerCode() {
                 palette: paletteArray
             };
         },
-        'run': function run() {
-            var frame = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-            var height = frame.height,
-                palette = frame.palette,
-                sampleInterval = frame.sampleInterval,
-                width = frame.width;
+        'run': function run(frame) {
+            frame = frame || {};
+
+            var _frame = frame,
+                height = _frame.height,
+                palette = _frame.palette,
+                sampleInterval = _frame.sampleInterval,
+                width = _frame.width;
 
             var imageData = frame.data;
 
@@ -2779,7 +2777,7 @@ var API = {
   'isWebCamGIFSupported': isWebCamGIFSupported,
   'isExistingVideoGIFSupported': isExistingVideoGIFSupported,
   'isExistingImagesGIFSupported': isSupported$1,
-  'VERSION': '0.4.1'
+  'VERSION': '0.4.2'
 };
 
 /*

@@ -13,7 +13,7 @@ export default function workerCode () {
     const self = this;
 
     try {
-        self.onmessage = (ev) => {
+        self.onmessage = function (ev) {
             var data = ev.data || {};
             var response;
 
@@ -25,7 +25,7 @@ export default function workerCode () {
     } catch (e) {};
 
     const workerMethods = {
-        dataToRGB: (data, width, height) => {
+        dataToRGB: function (data, width, height) {
             const length = width * height * 4;
             let i = 0;
             let rgb = [];
@@ -39,17 +39,16 @@ export default function workerCode () {
 
             return rgb;
         },
-        componentizedPaletteToArray: (paletteRGB) => {
-            let paletteArray = [];
-            let i;
-            let r;
-            let g;
-            let b;
+        componentizedPaletteToArray: function (paletteRGB) {
+            paletteRGB = paletteRGB || [];
 
-            for (i = 0; i < paletteRGB.length; i += 3) {
-                r = paletteRGB[i];
-                g = paletteRGB[i + 1];
-                b = paletteRGB[i + 2];
+            let paletteArray = [];
+
+            for (let i = 0; i < paletteRGB.length; i += 3) {
+                let r = paletteRGB[i];
+                let g = paletteRGB[i + 1];
+                let b = paletteRGB[i + 2];
+
                 paletteArray.push(r << 16 | g << 8 | b);
             }
 
@@ -64,15 +63,12 @@ export default function workerCode () {
             let numberPixels = width * height;
             let indexedPixels = new Uint8Array(numberPixels);
             let k = 0;
-            let i;
-            let r;
-            let g;
-            let b;
 
-            for (i = 0; i < numberPixels; i++) {
-                r = rgbComponents[k++];
-                g = rgbComponents[k++];
-                b = rgbComponents[k++];
+            for (let i = 0; i < numberPixels; i++) {
+                let r = rgbComponents[k++];
+                let g = rgbComponents[k++];
+                let b = rgbComponents[k++];
+
                 indexedPixels[i] = nq.map(r, g, b);
             }
 
@@ -81,8 +77,10 @@ export default function workerCode () {
                 palette: paletteArray
             };
         },
-        'run': function (frame = {}) {
-            const {
+        'run': function (frame) {
+            frame = frame || {};
+
+            let {
                 height,
                 palette,
                 sampleInterval,
