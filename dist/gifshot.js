@@ -2786,7 +2786,7 @@ var API = {
   'isWebCamGIFSupported': isWebCamGIFSupported,
   'isExistingVideoGIFSupported': isExistingVideoGIFSupported,
   'isExistingImagesGIFSupported': isSupported$1,
-  'VERSION': '0.4.0'
+  'VERSION': '0.4.1'
 };
 
 /*
