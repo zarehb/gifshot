@@ -220,6 +220,7 @@ AnimatedGIF.prototype = {
       const {
           interval
       } = options;
+      const frameDuration = options.frameDuration * 100;
       const existingImages = options.images;
       const hasExistingImages = !!(existingImages.length);
       const height = options.gifHeight;
@@ -233,14 +234,16 @@ AnimatedGIF.prototype = {
       this.generatingGIF = true;
 
       utils.each(frames, (iterator, frame) => {
-          var framePalette = frame.palette;
+          const framePalette = frame.palette;
 
           onRenderProgressCallback(0.75 + 0.25 * frame.position * 1.0 / frames.length);
 
-          gifWriter.addFrame(0, 0, width, height, frame.pixels, {
-              palette: framePalette,
-              delay: delay
-          });
+          for (let i = 0; i < frameDuration; i ++) {
+              gifWriter.addFrame(0, 0, width, height, frame.pixels, {
+                  palette: framePalette,
+                  delay: delay
+              });
+          }
       });
 
       gifWriter.end();

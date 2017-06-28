@@ -4,6 +4,7 @@
     var gifType = document.querySelector('#GIFType');
     var interval = document.querySelector("#interval");
     var numFrames = document.querySelector("#numFrames");
+    var frameDuration = document.querySelector("#frameDuration");
     var gifHeight = document.querySelector("#gifHeight");
     var gifWidth = document.querySelector("#gifWidth");
     var progressBar = document.querySelector("progress");
@@ -29,6 +30,7 @@
             video: gifSource.value === 'video' ? ['example.mp4', 'example.ogv'] : false,
             interval: Number(interval.value),
             numFrames: Number(numFrames.value),
+            frameDuration: Number(frameDuration.value),
             text: text.value,
             fontWeight: fontWeight.value,
             fontSize: fontSize.value + 'px',

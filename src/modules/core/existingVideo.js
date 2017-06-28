@@ -43,7 +43,11 @@ export default function existingVideo (obj = {}) {
         }
     } else if (utils.isArray(existingVideo)) {
         utils.each(existingVideo, function(iterator, videoSrc) {
-            videoType = videoSrc.substr(videoSrc.lastIndexOf('.') + 1, videoSrc.length);
+            if (videoSrc instanceof Blob) {
+                videoType = videoSrc.type.substr(videoSrc.type.lastIndexOf('/') + 1, videoSrc.length);
+            } else {
+                videoType = videoSrc.substr(videoSrc.lastIndexOf('.') + 1, videoSrc.length);
+            }
 
             if (utils.isSupported.videoCodecs[videoType]) {
                 existingVideo = videoSrc;
