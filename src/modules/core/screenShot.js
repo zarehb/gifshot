@@ -58,7 +58,7 @@ const screenShot = {
         let sourceWidth = crop ? videoWidth - crop.scaledWidth : 0;
         let sourceY = crop ? Math.floor(crop.scaledHeight / 2) : 0;
         let sourceHeight = crop ? videoHeight - crop.scaledHeight : 0;
-        const captureFrames = () => {
+        const captureFrames = function captureSingleFrame () {
             const framesLeft = pendingFrames - 1;
 
             if (savedRenderingContexts.length) {
@@ -129,7 +129,8 @@ const screenShot = {
               progressCallback((numFrames - pendingFrames) / numFrames);
 
               if (framesLeft > 0) {
-                  utils.requestTimeout(captureFrame, waitBetweenFrames);
+                // test
+                  utils.requestTimeout(captureSingleFrame, waitBetweenFrames);
               }
 
               if (!pendingFrames) {
@@ -158,13 +159,13 @@ const screenShot = {
       context = canvas.getContext('2d');
 
       (function capture() {
-        if (!savedRenderingContexts.length && videoElement.currentTime === 0) {
-          utils.requestTimeout(capture, 100);
+          if (!savedRenderingContexts.length && videoElement.currentTime === 0) {
+              utils.requestTimeout(capture, 100);
 
-          return;
-        }
+              return;
+          }
 
-        captureFrames();
+          captureFrames();
       }());
     },
     getCropDimensions: (obj = {}) => {

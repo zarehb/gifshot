@@ -35,7 +35,7 @@ const AnimatedGIF = function (options) {
 
 AnimatedGIF.prototype = {
   'workerMethods': frameWorkerCode(),
-  'initializeWebWorkers': (options) => {
+  'initializeWebWorkers': function (options) {
       const self = this;
       const processFrameWorkerCode = NeuQuant.toString() + '(' + frameWorkerCode.toString() + '());';
       let webWorkerObj;
@@ -74,11 +74,11 @@ AnimatedGIF.prototype = {
       this.frames = [];
   },
   // Return a worker for processing a frame
-  getWorker: () => {
+  getWorker: function () {
       return this.availableWorkers.pop();
   },
   // Restores a worker to the pool
-  freeWorker: (worker) => {
+  freeWorker: function (worker) {
       this.availableWorkers.push(worker);
   },
   byteMap: (() => {
@@ -90,7 +90,7 @@ AnimatedGIF.prototype = {
 
       return byteMap;
   })(),
-  bufferToString: (buffer) => {
+  bufferToString: function (buffer) {
       const numberValues = buffer.length;
       let str = '';
       let x = -1;
@@ -101,7 +101,7 @@ AnimatedGIF.prototype = {
 
       return str;
   },
-  onFrameFinished: (progressCallback) => {
+  onFrameFinished: function (progressCallback) {
       // The GIF is not written until we're done with all the frames
       // because they might not be processed in the same order
       const self = this;
@@ -133,7 +133,7 @@ AnimatedGIF.prototype = {
           }, 1);
       }
   },
-  processFrame: (position) => {
+  processFrame: function (position) {
       const AnimatedGifContext = this;
       const options = this.options;
       const {
@@ -184,14 +184,14 @@ AnimatedGIF.prototype = {
           });
       }
   },
-  startRendering: (completeCallback) => {
+  startRendering: function (completeCallback) {
       this.onRenderCompleteCallback = completeCallback;
 
       for (let i = 0; i < this.options.numWorkers && i < this.frames.length; i++) {
           this.processFrame(i);
       }
   },
-  processNextFrame: () => {
+  processNextFrame: function () {
       let position = -1;
 
       for (let i = 0; i < this.frames.length; i++) {
@@ -209,7 +209,7 @@ AnimatedGIF.prototype = {
   },
   // Takes the already processed data in frames and feeds it to a new
   // GifWriter instance in order to get the binary GIF file
-  generateGIF: (frames, callback) => {
+  generateGIF: function (frames, callback) {
       // TODO: Weird: using a simple JS array instead of a typed array,
       // the files are WAY smaller o_o. Patches/explanations welcome!
       let buffer = []; // new Uint8Array(width * height * frames.length * 5);
@@ -218,9 +218,9 @@ AnimatedGIF.prototype = {
       };
       const options = this.options;
       const {
-          images,
-          interval,
+          interval
       } = options;
+      const existingImages = options.images;
       const hasExistingImages = !!(existingImages.length);
       const height = options.gifHeight;
       const width = options.gifWidth;
@@ -259,10 +259,10 @@ AnimatedGIF.prototype = {
       }
   },
   // From GIF: 0 = loop forever, null = not looping, n > 0 = loop n times and stop
-  setRepeat: (r) => {
+  setRepeat: function (r) {
       this.repeat = r;
   },
-  addFrame: (element, gifshotOptions) => {
+  addFrame: function (element, gifshotOptions) {
       gifshotOptions = utils.isObject(gifshotOptions) ? gifshotOptions : {};
 
       const self = this;
@@ -304,7 +304,7 @@ AnimatedGIF.prototype = {
           return '' + e;
       }
   },
-  addFrameImageData: (imageData = {}) => {
+  addFrameImageData: function (imageData = {}) {
       const frames = this.frames;
       const imageDataArray = imageData.data;
 
@@ -319,13 +319,13 @@ AnimatedGIF.prototype = {
           'position': frames.length
       });
   },
-  onRenderProgress: (callback) => {
+  onRenderProgress: function (callback) {
       this.onRenderProgressCallback = callback;
   },
-  isRendering: () => {
+  isRendering: function () {
       return this.generatingGIF;
   },
-  getBase64GIF: (completeCallback) => {
+  getBase64GIF: function (completeCallback) {
       const self = this;
       const onRenderComplete = (gif) => {
           self.destroyWorkers();
@@ -337,7 +337,7 @@ AnimatedGIF.prototype = {
 
       self.startRendering(onRenderComplete);
   },
-  destroyWorkers: () => {
+  destroyWorkers: function () {
       if (this.workerError) {
           return;
       }

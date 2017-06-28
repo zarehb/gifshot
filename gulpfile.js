@@ -4,37 +4,61 @@
 
 // Dependencies
 const gulp = require('gulp');
+const runSequence = require('run-sequence').use(gulp);
 const babel = require('rollup-plugin-babel');
-const rollup = require('rollup-stream');
+const rollup = require('rollup');
+const iife = require("gulp-iife");
 const uglify = require('gulp-uglify');
 const insert = require('gulp-insert');
 const rename = require('gulp-rename');
-const source = require('vinyl-source-stream');
 const mocha = require('gulp-mocha');
 const istanbul = require('gulp-istanbul');
-const rimraf = require('gulp-rimraf');
 const fs = require('fs');
 
 // Helpers
 const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
 const licenseText = '/*' + fs.readFileSync('./LICENSE.txt', 'utf8') + '\n*/\n';
 
-gulp.task('build', () => {
-    return rollup({
-        entry: './src/modules/index.js',
+gulp.task('build', (cb) => {
+    rollup.rollup({
+        entry: 'src/modules/index.js',
         format: 'iife',
         plugins: [
-            babel()
+            babel({
+                plugins: [
+                    'external-helpers'
+                ],
+                presets: [
+                      [
+                            'es2015',
+                            {
+                                'modules': false
+                            }
+                      ]
+                ]
+            })
         ]
+    }).then((bundle) => {
+        bundle.write({
+            dest: 'src/gifshot.js',
+            format: 'es'
+        });
+
+        cb();
     })
-        .pipe(gulp.src('./src/modules/index.js'))
-        .pipe(source('gifshot.js'))
-        .pipe(insert.prepend(licenseText))
-        .pipe(gulp.dest('./src'));
 });
 
-// Task that creates a customized gifshot.js file (only including modules that are testable)
-// and runs the Mocha unit tests and Instanbul test coverage
+// Wrap IIFE
+gulp.task('iife', () => {
+    return gulp.src('src/gifshot.js')
+        .pipe(iife({
+            params: ['window', 'document', 'navigator', 'undefined'],
+            args: ['typeof window !== "undefined" ? window : {}', 'typeof document !== "undefined" ? document : { createElement: function() {} }', 'typeof window !== "undefined" ? window.navigator : {}']
+        }))
+        .pipe(gulp.dest('src'));
+});
+
+// Task that runs the Mocha unit tests and Instanbul test coverage
 gulp.task('test', (cb) => {
     gulp.src('src/gifshot.js')
         .pipe(istanbul()) // Covering files
@@ -44,41 +68,36 @@ gulp.task('test', (cb) => {
                     reporter: 'nyan'
                 }))
                 .pipe(istanbul.writeReports()) // Creating the reports after tests runned
-                .on('end', cb); // finished task
+                .on('end', cb);
         });
 });
 
 // Copies src/gifshot.js to dist/gifshot.js
 gulp.task('copy', () => {
-    gulp.src(['./src/gifshot.js'])
+    return gulp.src('src/gifshot.js')
+        .pipe(insert.prepend(licenseText))
         .pipe(gulp.dest('dist'))
-        .pipe(gulp.dest('./demo/js/dependencies/'));
+        .pipe(gulp.dest('demo/js/dependencies'));
 });
 
 // Uglify.js task that minifies dist/gifshot.js and adds gifshot.min.js to the build folder
 gulp.task('minify', () => {
-    gulp.src(['dist/gifshot.js'])
+    return gulp.src(['dist/gifshot.js'])
         .pipe(uglify())
         .pipe(rename('gifshot.min.js'))
         .pipe(insert.prepend(licenseText))
-        .pipe(gulp.dest('./dist'))
-        .pipe(gulp.dest('./demo/js/dependencies'))
-});
-
-// Cleanup task that removes certain temporary files
-gulp.task('cleanup', () => {
-    gulp.src(['./src/gifshot.js'], {
-        read: false
-    })
-        .pipe(rimraf());
+        .pipe(gulp.dest('dist'))
+        .pipe(gulp.dest('demo/js/dependencies'));
 });
 
 // The default build task (called when you run `gulp`)
-gulp.task('default', ['build', 'copy', 'minify', 'cleanup']);
+gulp.task('default', function () {
+    runSequence('build', 'iife', 'copy', 'minify');
+});
 
 // The watch task that runs the default task on any gifshot module file changes
 gulp.task('watch', () => {
-    const watcher = gulp.watch('./src/modules/**/*.js', ['default']);
+    const watcher = gulp.watch('src/modules/**/*.js', ['default']);
 
     watcher.on('change', (event) => {
         console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');

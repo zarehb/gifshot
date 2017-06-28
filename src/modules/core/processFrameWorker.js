@@ -56,7 +56,7 @@ export default function workerCode () {
             return paletteArray;
         },
         // This is the "traditional" Animated_GIF style of going from RGBA to indexed color frames
-        'processFrameWithQuantizer': (imageData, width, height, sampleInterval) => {
+        'processFrameWithQuantizer': function (imageData, width, height, sampleInterval) {
             let rgbComponents = this.dataToRGB(imageData, width, height);
             let nq = new NeuQuant(rgbComponents, rgbComponents.length, sampleInterval);
             let paletteRGB = nq.process();
@@ -81,7 +81,7 @@ export default function workerCode () {
                 palette: paletteArray
             };
         },
-        'run': (frame = {}) => {
+        'run': function (frame = {}) {
             const {
                 height,
                 palette,

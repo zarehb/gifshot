@@ -1,41 +1,42 @@
-import chai from 'chai';
-import * as gifshot from '../dist/gifshot.min.js';
+var chai = require('chai');
+var gifshot = require('../src/gifshot.js');
 
-const expect = chai.expect;
-const gifshotUtils = gifshot.utils;
+var expect = chai.expect;
+var gifshotUtils = gifshot.utils.default;
+var gifshotDefaultOptions = gifshot.defaultOptions.default;
 
-describe('gifshot', () => {
-  describe('#utils', () => {
-    it('should check gifshotUtils is an object', () => {
+describe('gifshot', function () {
+  describe('#utils', function () {
+    it('should check gifshotUtils is an object', function () {
         expect(gifshotUtils).not.to.equal(undefined);
     });
 
-    it('should check URL is undefined', () => {
+    it('should check URL is undefined', function () {
         expect(gifshotUtils.URL).to.equal(undefined);
     });
 
-    it('should check getUserMedia is undefined', () => {
+    it('should check getUserMedia is undefined', function () {
         expect(gifshotUtils.getUserMedia).to.equal(undefined);
     });
 
-    it('should check Blob is undefined', () => {
+    it('should check Blob is undefined', function () {
         expect(gifshotUtils.Blob).to.equal(undefined);
     });
 
-    it('should check btoa is a function', () => {
+    it('should check btoa is a function', function () {
         expect(gifshotUtils.isFunction(gifshotUtils.btoa)).to.equal(true);
     });
 
-    it('should correctly detect objects', () => {
-        const obj = {
+    it('should correctly detect objects', function () {
+        var obj = {
             'test': true
         };
-        const func = () => {};
-        const arr = [];
-        const str = new String('test');
-        const str1 = 'test';
-        const num = new Number(1);
-        const num1 = 1;
+        var func = function () {};
+        var arr = [];
+        var str = new String('test');
+        var str1 = 'test';
+        var num = new Number(1);
+        var num1 = 1;
 
         expect(gifshotUtils.isObject(obj)).to.equal(true);
         expect(gifshotUtils.isObject(func)).to.equal(false);
@@ -46,17 +47,17 @@ describe('gifshot', () => {
         expect(gifshotUtils.isObject(num1)).to.equal(false);
     });
 
-    it('should correctly detect empty objects', () => {
-        const obj = {
+    it('should correctly detect empty objects', function () {
+        var obj = {
             'test': true
         };
-        const obj1 = {};
-        const func = () => {};
-        const arr = [];
-        const str = new String('test');
-        const str1 = 'test';
-        const num = new Number(1);
-        const num1 = 1;
+        var obj1 = {};
+        var func = function () {};
+        var arr = [];
+        var str = new String('test');
+        var str1 = 'test';
+        var num = new Number(1);
+        var num1 = 1;
 
         expect(gifshotUtils.isEmptyObject(obj1)).to.equal(true);
         expect(gifshotUtils.isEmptyObject(obj)).to.equal(false);
@@ -68,16 +69,16 @@ describe('gifshot', () => {
         expect(gifshotUtils.isEmptyObject(num1)).to.equal(false);
     });
 
-    it('should correctly detect arrays', () => {
-        const obj = {
+    it('should correctly detect arrays', function () {
+        var obj = {
             'test': true
         };
-        const func = () => {};
-        const arr = [];
-        const str = new String('test');
-        const str1 = 'test';
-        const num = new Number(1);
-        const num1 = 1;
+        var func = function () {};
+        var arr = [];
+        var str = new String('test');
+        var str1 = 'test';
+        var num = new Number(1);
+        var num1 = 1;
 
         expect(gifshotUtils.isArray(arr)).to.equal(true);
         expect(gifshotUtils.isArray(obj)).to.equal(false);
@@ -88,16 +89,16 @@ describe('gifshot', () => {
         expect(gifshotUtils.isArray(num1)).to.equal(false);
     });
 
-    it('should correctly detect functions', () => {
-        const obj = {
+    it('should correctly detect functions', function () {
+        var obj = {
             'test': true
         };
-        const func = () => {};
-        const arr = [];
-        const str = new String('test');
-        const str1 = 'test';
-        const num = new Number(1);
-        const num1 = 1;
+        var func = function () {};
+        var arr = [];
+        var str = new String('test');
+        var str1 = 'test';
+        var num = new Number(1);
+        var num1 = 1;
 
         expect(gifshotUtils.isFunction(func)).to.equal(true);
         expect(gifshotUtils.isFunction(arr)).to.equal(false);
@@ -108,20 +109,20 @@ describe('gifshot', () => {
         expect(gifshotUtils.isFunction(num1)).to.equal(false);
     });
 
-    it('should correctly detect strings', () => {
+    it('should correctly detect strings', function () {
         expect(gifshotUtils.isElement({})).to.equal(false);
     });
 
-    it('should correctly detect strings', () => {
-        const obj = {
+    it('should correctly detect strings', function () {
+        var obj = {
             'test': true
         };
-        const func = () => {};
-        const arr = [];
-        const str = new String('test');
-        const str1 = 'test';
-        const num = new Number(1);
-        const num1 = 1;
+        var func = function () {};
+        var arr = [];
+        var str = new String('test');
+        var str1 = 'test';
+        var num = new Number(1);
+        var num1 = 1;
 
         expect(gifshotUtils.isString(str)).to.equal(true);
         expect(gifshotUtils.isString(str1)).to.equal(true);
@@ -132,50 +133,50 @@ describe('gifshot', () => {
         expect(gifshotUtils.isString(num1)).to.equal(false);
     });
 
-    it('should have a check for canvas support', () => {
+    it('should have a check for canvas support', function () {
         expect(gifshotUtils.isSupported.canvas).not.to.equal(undefined);
     });
 
-    it('should have a check for web workers support', () => {
+    it('should have a check for web workers support', function () {
         expect(gifshotUtils.isSupported.webworkers).not.to.equal(undefined);
     });
 
-    it('should have a check for Blob support', () => {
+    it('should have a check for Blob support', function () {
         expect(gifshotUtils.isSupported.blob).not.to.equal(undefined);
     });
 
-    it('should have a check for 8-int Typed Arrays support', () => {
+    it('should have a check for 8-int Typed Arrays support', function () {
         expect(gifshotUtils.isSupported.Uint8Array).not.to.equal(undefined);
         expect(gifshotUtils.isSupported.Uint8Array()).to.equal(undefined);
     });
 
-    it('should have a check for 32-int Typed Arrays support', () => {
+    it('should have a check for 32-int Typed Arrays support', function () {
         expect(gifshotUtils.isSupported.Uint32Array).not.to.equal(undefined);
         expect(gifshotUtils.isSupported.Uint32Array()).to.equal(undefined);
     });
 
-    it('should have a check for videoCodecs support', () => {
+    it('should have a check for videoCodecs support', function () {
         expect(gifshotUtils.isSupported.videoCodecs).not.to.equal(undefined);
     });
 
-    it('should return an empty function for noop', () => {
+    it('should return an empty function for noop', function () {
         expect(gifshotUtils.isFunction(gifshotUtils.noop)).to.equal(true);
     });
 
-    it('should correctly iterate arrays and objects with the each method', () => {
-        const arr = ['test', 'testing'];
-        let arrCount = 0;
-        const obj = {
+    it('should correctly iterate arrays and objects with the each method', function () {
+        var arr = ['test', 'testing'];
+        var arrCount = 0;
+        var obj = {
             'test': 'hmm',
             'testing': 'check'
         };
-        let objCount = 0;
+        var objCount = 0;
 
-        gifshotUtils.each(arr, () => {
+        gifshotUtils.each(arr, function () {
             arrCount += 1;
         });
 
-        gifshotUtils.each(obj, () => {
+        gifshotUtils.each(obj, function () {
             objCount += 1;
         });
 
@@ -183,136 +184,136 @@ describe('gifshot', () => {
         expect(objCount).to.equal(2);
     });
 
-    it('should correctly merge objects together', () => {
-        const defaultOptions = {
+    it('should correctly merge objects together', function () {
+        var defaultOptions = {
             'test': 'testing',
             'nestedTest': {
                 'test': 'blah'
             }
         };
-        const userOptions = {
+        var userOptions = {
             'nestedTest': {
                 'test': 'this is a test'
             }
         };
-        const mergedOptions = gifshotUtils.mergeOptions(defaultOptions, userOptions);
+        var mergedOptions = gifshotUtils.mergeOptions(defaultOptions, userOptions);
 
         expect(mergedOptions.test).to.equal('testing');
         expect(mergedOptions.nestedTest.test).to.equal('this is a test');
     });
 
-    it('should test the progress callback', () => {
-        expect(gifshot.defaultOptions.progressCallback()).to.equal(undefined);
-        expect(gifshot.defaultOptions.completeCallback()).to.equal(undefined);
+    it('should test the progress callback', function () {
+        expect(gifshotDefaultOptions.progressCallback()).to.equal(undefined);
+        expect(gifshotDefaultOptions.completeCallback()).to.equal(undefined);
     });
 
-    it('should set css attributes', () => {
+    it('should set css attributes', function () {
         expect(gifshotUtils.setCSSAttr()).to.equal(undefined);
     });
 
-    it('should remove an element', () => {
+    it('should remove an element', function () {
         expect(gifshotUtils.removeElement()).to.equal(undefined);
     });
 
-    it('should create a web worker', () => {
+    it('should create a web worker', function () {
         expect(gifshotUtils.isEmptyObject(gifshotUtils.createWebWorker())).to.equal(true);
     });
 
-    it('should get file extension', () => {
+    it('should get file extension', function () {
         expect(gifshotUtils.getExtension('test.gif')).to.equal('gif');
     });
 
-    it('should resize text', () => {
+    it('should resize text', function () {
         expect(gifshotUtils.getFontSize('test', 200, 18, 20)).to.equal(undefined);
     });
   });
 
-  describe('#apiMethods', () => {
-      describe('#createGIF', () => {
-          it('should have a createGIF method', () => {
+  describe('#apiMethods', function () {
+      describe('#createGIF', function () {
+          it('should have a createGIF method', function () {
               expect(gifshot.createGIF).not.to.equal(undefined);
           });
 
-          it('should correctly return the provided callback function', () => {
-              gifshot.createGIF({}, (obj) => {
+          it('should correctly return the provided callback function', function () {
+              gifshot.createGIF({}, function (obj) {
                   expect(gifshotUtils.isObject(obj)).to.equal(true);
                   expect(obj.error).to.equal(true);
               });
           });
       });
 
-      describe('#takeSnapShot', () => {
-          it('should have a takeSnapShot method', function() {
+      describe('#takeSnapShot', function () {
+          it('should have a takeSnapShot method', function () {
               expect(gifshot.takeSnapShot).not.to.equal(undefined);
           });
 
-          it ('should correctly return the provided callback function', () => {
-              gifshot.takeSnapShot({}, (obj) => {
+          it ('should correctly return the provided callback function', function () {
+              gifshot.takeSnapShot({}, function (obj) {
                   expect(gifshotUtils.isObject(obj)).to.equal(true);
                   expect(obj.error).to.equal(true);
               });
           });
       });
 
-      describe('#stopVideoStreaming', () => {
-          it ('should have a stopVideoStreaming method', () => {
+      describe('#stopVideoStreaming', function () {
+          it ('should have a stopVideoStreaming method', function () {
               expect(gifshot.stopVideoStreaming).not.to.equal(undefined);
           });
       });
 
-      describe('#isSupported', () {
-          it ('should have an isSupported method', () => {
+      describe('#isSupported', function () {
+          it ('should have an isSupported method', function () {
               expect(gifshot.isSupported).not.to.equal(undefined);
           });
 
-          it ('should call isSupported', () => {
+          it ('should call isSupported', function () {
               expect(gifshot.isSupported()).not.to.equal(undefined);
           });
       });
 
-      describe('#isWebCamGIFSupported', () => {
-          it ('should have an isWebCamGIFSupported method', () => {
+      describe('#isWebCamGIFSupported', function () {
+          it ('should have an isWebCamGIFSupported method', function () {
               expect(gifshot.isWebCamGIFSupported).not.to.equal(undefined);
           });
 
-          it ('should call isWebCamGIFSupported', () => {
+          it ('should call isWebCamGIFSupported', function () {
             expect(gifshot.isWebCamGIFSupported()).not.to.equal(undefined);
           });
       });
 
-      describe('#isExistingVideoGIFSupported', () => {
-          it('should have an isExistingVideoGIFSupported method', () => {
+      describe('#isExistingVideoGIFSupported', function () {
+          it('should have an isExistingVideoGIFSupported method', function () {
               expect(gifshot.isExistingVideoGIFSupported).not.to.equal(undefined);
           });
 
-          it('should call isExistingVideoGIFSupported', => {
+          it('should call isExistingVideoGIFSupported', function () {
               expect(gifshot.isExistingVideoGIFSupported()).not.to.equal(undefined);
           });
       });
 
-      describe('#isExistingImagesGIFSupported', () => {
-          it('should have an isExistingImagesGIFSupported method', () => {
+      describe('#isExistingImagesGIFSupported', function () {
+          it('should have an isExistingImagesGIFSupported method', function () {
               expect(gifshot.isExistingImagesGIFSupported).not.to.equal(undefined);
           });
 
-          it('should call isExistingImagesGIFSupported', () => {
+          it('should call isExistingImagesGIFSupported', function () {
               expect(gifshot.isExistingImagesGIFSupported()).not.to.equal(undefined);
           });
       });
   });
 
-  describe('#error', () => {
-      const error = gifshot.error;
+  describe('#error', function () {
+      var error = gifshot.error.default;
 
-      it('should check the error object', () => {
+      it('should check the error object', function () {
           expect(gifshotUtils.isObject(error.validate())).to.equal(true);
       });
 
-      it('should check is valid', () => {
+      it('should check is valid', function () {
           expect(error.isValid()).to.equal(false);
       });
 
-      it('should check is valid', () => {
+      it('should check is valid', function () {
           expect(error.isValid({
               'getUserMedia': true,
               'canvas': true
