@@ -25,7 +25,8 @@
             <span class="gifshot-header-text">Demo</span>
           </span>
           <span class="options-button-group">
-            <button type="button" id="create-gif" class="btn btn-large btn-primary create-gif-button">Create GIF</button>
+            <a href="#" type="button" id="create-gif" class="btn btn-large btn-primary create-gif-button" role="button">Create GIF</a>
+            <a href="#" type="button" id="save-gif" class="btn btn-large btn-default save-gif-button hidden" role="button" download="gifshot-demo.gif">Download GIF</a>
           </span>
           <!-- main-header -->
           <header class="main-navigation navbar demo-navigation">
@@ -88,7 +89,7 @@
                 </div>
                 <div class="form-group">
                   <label for="frameDuration">Frame Duration</label>
-                  <input name="frameDuration" id="frameDuration" class="form-control" value=".1" step=".1" size="5" type="number"></input>
+                  <input name="frameDuration" id="frameDuration" class="form-control" value="1" step="1" size="5" type="number"></input>
                 </div>                
                 <div class="form-group">
                   <label for="gifText">GIF Text</label>

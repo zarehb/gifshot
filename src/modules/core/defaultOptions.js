@@ -17,7 +17,7 @@ const defaultOptions = {
     gifHeight: 200,
     interval: 0.1,
     numFrames: 10,
-    frameDuration: 0.1,
+    frameDuration: 1,
     keepCameraOn: false,
     images: [],
     video: null,

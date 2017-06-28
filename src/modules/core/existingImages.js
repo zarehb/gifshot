@@ -13,14 +13,15 @@ import getBase64GIF from './getBase64GIF';
 import error from './error';
 
 export default function existingImages (obj = {}) {
+    const self = this;
     const {
-        images,
-        imagesLength,
         callback,
+        images,
         options
     } = obj;
+    let imagesLength = obj.imagesLength;
     const skipObj = {
-        getUserMedia: true,
+        'getUserMedia': true,
         'window.URL': true
     };
     const errorObj = error.validate(skipObj);
@@ -36,35 +37,58 @@ export default function existingImages (obj = {}) {
     // change workerPath to point to where Animated_GIF.worker.js is
     ag = new AnimatedGIF(options);
 
-    utils.each(images, (index, currentImage) => {
+    utils.each(images, function (index, image) {
+        let currentImage = image;
+
+        if (image.src) {
+            currentImage = currentImage.src;
+        }
         if (utils.isElement(currentImage)) {
             if (options.crossOrigin) {
-              currentImage.crossOrigin = options.crossOrigin;
+                currentImage.crossOrigin = options.crossOrigin;
             }
 
             loadedImages[index] = currentImage;
             loadedImagesLength += 1;
 
-          if (loadedImagesLength === imagesLength) {
-              addLoadedImagesToGif();
-          }
+            if (loadedImagesLength === imagesLength) {
+                addLoadedImagesToGif();
+            }
         } else if (utils.isString(currentImage)) {
-            tempImage = document.createElement('img');
+            tempImage = new Image();
 
             if (options.crossOrigin) {
-              tempImage.crossOrigin = options.crossOrigin;
+                tempImage.crossOrigin = options.crossOrigin;
             }
 
-            tempImage.onerror = (e) => {
-                // If there is an error, ignore the image
-                if (loadedImages.length > index) {
-                    loadedImages[index] = undefined;
+            (function (tempImage) {
+                if(image.text) {
+                    tempImage.text = image.text;
                 }
-            }
 
-            ((tempImage) => {
-                tempImage.onload = () => {
-                    loadedImages[index] = tempImage;
+                tempImage.onerror = function (e) {
+                    let obj;
+
+                    --imagesLength; // skips over images that error out
+
+                    if (imagesLength === 0) {
+                        obj = {};
+                        obj.error = 'None of the requested images was capable of being retrieved';
+
+                        return callback(obj);
+                    }
+                };
+
+                tempImage.onload = function (e) {
+                    if(image.text) {
+                        loadedImages[index] = {
+                            img:tempImage,
+                            text: tempImage.text
+                        };
+                    } else {
+                        loadedImages[index] = tempImage;
+                    }
+
                     loadedImagesLength += 1;
 
                     if (loadedImagesLength === imagesLength) {
@@ -73,9 +97,9 @@ export default function existingImages (obj = {}) {
 
                     utils.removeElement(tempImage);
                 };
-            })(tempImage);
 
-            tempImage.src = currentImage;
+                tempImage.src = currentImage;
+            }(tempImage));
 
             utils.setCSSAttr(tempImage, {
                 position: 'fixed',
@@ -87,9 +111,13 @@ export default function existingImages (obj = {}) {
     });
 
     function addLoadedImagesToGif () {
-        utils.each(loadedImages, (index, loadedImage) => {
+        utils.each(loadedImages, function (index, loadedImage) {
             if (loadedImage) {
-                ag.addFrame(loadedImage, options);
+                if(loadedImage.text) {
+                    ag.addFrame(loadedImage.img, options, loadedImage.text);
+                } else {
+                    ag.addFrame(loadedImage, options);
+                }
             }
         });
 

@@ -1,4 +1,6 @@
 (function(window, document) {
+    var saveGIFButton = document.querySelector('#save-gif');
+    var downloadAttrSupported = ('download' in document.createElement('a'));
     var createGIFButton = document.querySelector('#create-gif');
     var gifSource = document.querySelector('#GIFSource');
     var gifType = document.querySelector('#GIFType');
@@ -26,7 +28,7 @@
         return {
             gifWidth: Number(gifWidth.value),
             gifHeight: Number(gifHeight.value),
-            images: gifSource.value === 'images' ? ['http://i.imgur.com/2OO33vX.jpg', 'http://i.imgur.com/qOwVaSN.png', 'http://i.imgur.com/Vo5mFZJ.gif'] : false,
+            images: gifSource.value === 'images' ? ['http://i.imgur.com/2OO33vX.png', 'http://i.imgur.com/qOwVaSN.png', 'http://i.imgur.com/Vo5mFZJ.gif'] : false,
             video: gifSource.value === 'video' ? ['example.mp4', 'example.ogv'] : false,
             interval: Number(interval.value),
             numFrames: Number(numFrames.value),
@@ -95,6 +97,8 @@
     };
     var bindEvents = function () {
         createGIFButton.addEventListener('click', function (e) {
+            e.preventDefault();
+
             passedOptions = _.merge(_.clone(getSelectedOptions()), {
                 progressCallback: function (captureProgress) {
                     gifshotImagePreview.innerHTML = '';
@@ -119,12 +123,24 @@
                     placeholderDiv.classList.add('hidden');
                     gifshotImagePreview.innerHTML = '';
                     gifshotImagePreview.appendChild(animatedImage);
+
+                    if (downloadAttrSupported) {
+                        saveGIFButton.setAttribute('href', image);
+                        saveGIFButton.classList.remove('hidden');
+                    }
                 } else {
                     console.log('obj.error', obj.error);
                     console.log('obj.errorCode', obj.errorCode);
                     console.log('obj.errorMsg', obj.errorMsg);
                 }
             });
+        }, false);
+
+        saveGIFButton.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            window.open(saveGIFButton.getAttribute('href'));
+
         }, false);
 
         document.addEventListener('change', function (e) {

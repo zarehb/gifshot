@@ -389,7 +389,7 @@ var defaultOptions = {
     gifHeight: 200,
     interval: 0.1,
     numFrames: 10,
-    frameDuration: 0.1,
+    frameDuration: 1,
     keepCameraOn: false,
     images: [],
     video: null,
@@ -1748,7 +1748,7 @@ AnimatedGIF.prototype = {
         var options = this.options;
         var interval = options.interval;
 
-        var frameDuration = options.frameDuration * 100;
+        var frameDuration = options.frameDuration;
         var existingImages = options.images;
         var hasExistingImages = !!existingImages.length;
         var height = options.gifHeight;
@@ -1920,13 +1920,15 @@ function getBase64GIF(animatedGifInstance, callback) {
 
 function existingImages() {
     var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var images = obj.images,
-        imagesLength = obj.imagesLength,
-        callback = obj.callback,
+
+    var self = this;
+    var callback = obj.callback,
+        images = obj.images,
         options = obj.options;
 
+    var imagesLength = obj.imagesLength;
     var skipObj = {
-        getUserMedia: true,
+        'getUserMedia': true,
         'window.URL': true
     };
     var errorObj = error.validate(skipObj);
@@ -1942,7 +1944,12 @@ function existingImages() {
     // change workerPath to point to where Animated_GIF.worker.js is
     ag = new AnimatedGIF(options);
 
-    utils.each(images, function (index, currentImage) {
+    utils.each(images, function (index, image) {
+        var currentImage = image;
+
+        if (image.src) {
+            currentImage = currentImage.src;
+        }
         if (utils.isElement(currentImage)) {
             if (options.crossOrigin) {
                 currentImage.crossOrigin = options.crossOrigin;
@@ -1955,22 +1962,40 @@ function existingImages() {
                 addLoadedImagesToGif();
             }
         } else if (utils.isString(currentImage)) {
-            tempImage = document.createElement('img');
+            tempImage = new Image();
 
             if (options.crossOrigin) {
                 tempImage.crossOrigin = options.crossOrigin;
             }
 
-            tempImage.onerror = function (e) {
-                // If there is an error, ignore the image
-                if (loadedImages.length > index) {
-                    loadedImages[index] = undefined;
-                }
-            };
-
             (function (tempImage) {
-                tempImage.onload = function () {
-                    loadedImages[index] = tempImage;
+                if (image.text) {
+                    tempImage.text = image.text;
+                }
+
+                tempImage.onerror = function (e) {
+                    var obj = void 0;
+
+                    --imagesLength; // skips over images that error out
+
+                    if (imagesLength === 0) {
+                        obj = {};
+                        obj.error = 'None of the requested images was capable of being retrieved';
+
+                        return callback(obj);
+                    }
+                };
+
+                tempImage.onload = function (e) {
+                    if (image.text) {
+                        loadedImages[index] = {
+                            img: tempImage,
+                            text: tempImage.text
+                        };
+                    } else {
+                        loadedImages[index] = tempImage;
+                    }
+
                     loadedImagesLength += 1;
 
                     if (loadedImagesLength === imagesLength) {
@@ -1979,9 +2004,9 @@ function existingImages() {
 
                     utils.removeElement(tempImage);
                 };
-            })(tempImage);
 
-            tempImage.src = currentImage;
+                tempImage.src = currentImage;
+            })(tempImage);
 
             utils.setCSSAttr(tempImage, {
                 position: 'fixed',
@@ -1995,7 +2020,11 @@ function existingImages() {
     function addLoadedImagesToGif() {
         utils.each(loadedImages, function (index, loadedImage) {
             if (loadedImage) {
-                ag.addFrame(loadedImage, options);
+                if (loadedImage.text) {
+                    ag.addFrame(loadedImage.img, options, loadedImage.text);
+                } else {
+                    ag.addFrame(loadedImage, options);
+                }
             }
         });
 
@@ -2624,7 +2653,7 @@ function existingWebcam() {
     }
 
     if (options.savedRenderingContexts.length) {
-        screenShot.getWebcamGIF(options, function (obj) {
+        screenShot.getGIF(options, function (obj) {
             callback(obj);
         });
 

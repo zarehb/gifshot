@@ -220,7 +220,7 @@ AnimatedGIF.prototype = {
       const {
           interval
       } = options;
-      const frameDuration = options.frameDuration * 100;
+      const frameDuration = options.frameDuration;
       const existingImages = options.images;
       const hasExistingImages = !!(existingImages.length);
       const height = options.gifHeight;
