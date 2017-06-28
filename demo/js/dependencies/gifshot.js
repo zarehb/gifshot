@@ -2454,15 +2454,20 @@ var videoStream = {
         obj = utils.isObject(obj) ? obj : {};
 
         var _obj = obj,
-            cameraStream = _obj.cameraStream,
             keepCameraOn = _obj.keepCameraOn,
             videoElement = _obj.videoElement,
             webcamVideoElement = _obj.webcamVideoElement;
 
+        var cameraStream = obj.cameraStream || {};
+        var cameraStreamTracks = cameraStream.getTracks ? cameraStream.getTracks() || [] : [];
+        var hasCameraStreamTracks = !!cameraStreamTracks.length;
+        var firstCameraStreamTrack = cameraStreamTracks[0];
 
-        if (!keepCameraOn && cameraStream && utils.isFunction(cameraStream.stop)) {
-            // Stops the camera stream
-            cameraStream.stop();
+        if (!keepCameraOn && hasCameraStreamTracks) {
+            if (utils.isFunction(firstCameraStreamTrack.stop)) {
+                // Stops the camera stream
+                firstCameraStreamTrack.stop();
+            }
         }
 
         if (utils.isElement(videoElement) && !webcamVideoElement) {

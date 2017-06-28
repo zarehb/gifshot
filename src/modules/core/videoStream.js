@@ -230,15 +230,20 @@ const videoStream = {
         obj = utils.isObject(obj) ? obj : {};
 
         const {
-            cameraStream,
             keepCameraOn,
             videoElement,
             webcamVideoElement
         } = obj;
+        const cameraStream = obj.cameraStream || {};
+        const cameraStreamTracks = cameraStream.getTracks ? cameraStream.getTracks() || []: [];
+        const hasCameraStreamTracks = !!cameraStreamTracks.length;
+        const firstCameraStreamTrack = cameraStreamTracks[0];
 
-        if (!keepCameraOn && cameraStream && utils.isFunction(cameraStream.stop)) {
-            // Stops the camera stream
-            cameraStream.stop();
+        if (!keepCameraOn && hasCameraStreamTracks) {
+            if (utils.isFunction(firstCameraStreamTrack.stop)) {
+                // Stops the camera stream
+                firstCameraStreamTrack.stop();
+            }
         }
 
         if (utils.isElement(videoElement) && !webcamVideoElement) {
