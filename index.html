@@ -13,6 +13,17 @@
 
         <!-- Custom CSS styles -->
         <link rel="stylesheet" href="css/style.css">
+
+        <script>
+            (function () {
+                var PROD_HOST = 'yahoo.github.io';
+                var isProd = window.location.host === PROD_HOST
+                var isHttps = window.location.protocol === 'https:';
+                if (isProd && !isHttps) {
+                    window.location.protocol = 'https';
+                }
+            }());
+        </script>
     </head>
 
     <body>
