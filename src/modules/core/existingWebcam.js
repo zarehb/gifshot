@@ -28,7 +28,7 @@ export default function existingWebcam (obj = {}) {
     }
 
     if (options.savedRenderingContexts.length) {
-        screenShot.getWebcamGIF(options, (obj) => {
+        screenShot.getGIF(options, (obj) => {
             callback(obj);
         });
 
