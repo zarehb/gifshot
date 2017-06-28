@@ -111,7 +111,6 @@
             var method = gifType.value === 'snapshot' ? 'takeSnapShot' : 'createGIF';
 
             gifshot[method](passedOptions, function(obj) {
-                console.log('obj: ', obj);
                 if (!obj.error) {
                     var image = obj.image;
                     var animatedImage = document.createElement('img');

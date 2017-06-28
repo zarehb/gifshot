@@ -899,6 +899,10 @@ progress:not([value])::-webkit-progress-bar {
     min-width: inherit;
     min-height: inherit;
   }
+
+  .save-gif-button {
+    display: none;
+  }
 }
 
 .gifshot-loader {
