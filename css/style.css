@@ -612,6 +612,13 @@ section * {
   left:0;
 }
 
+.gifshot-header-text {
+  font-weight: 100;
+  margin-left: -25px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .gifshot-brand {
   font-family: 'Grand Hotel',cursive;
   font-size: 60px;
@@ -889,8 +896,12 @@ progress:not([value])::-webkit-progress-bar {
     text-align: right;
   }
   .gifshot-images {
-    min-width: 350px;
-    min-height: 260px;
+    min-width: inherit;
+    min-height: inherit;
+  }
+
+  .save-gif-button {
+    display: none;
   }
 }
 

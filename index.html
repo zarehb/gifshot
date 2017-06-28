@@ -13,6 +13,17 @@
 
         <!-- Custom CSS styles -->
         <link rel="stylesheet" href="css/style.css">
+
+        <script>
+            (function () {
+                var PROD_HOST = 'yahoo.github.io';
+                var isProd = window.location.host === PROD_HOST
+                var isHttps = window.location.protocol === 'https:';
+                if (isProd && !isHttps) {
+                    window.location.protocol = 'https';
+                }
+            }());
+        </script>
     </head>
 
     <body>
@@ -77,8 +88,8 @@
                 </p>
               </div>
               <div class="col-md-6">
-                <h6>Customizable</h6>
-                <p>Custom builds can be used to only include the specific functionality needed for your project.
+                <h6>Lean</h6>
+                <p>Comes in under 10kb gzipped thanks to the awesome <a href="https://rollupjs.org/" target="_blank">Rollup.js</a> module bundler for JavaScript
                 </p>
               </div>
             </div>
@@ -158,5 +169,6 @@
       </footer>
       <script src="js/dependencies/lodash.min.js"></script>
       <script src="js/randomizeGIFs.js"></script>
+      <script src="js/dependencies/gifshot.min.js"></script>
     </body>
 </html>
