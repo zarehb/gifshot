@@ -1,41 +1,48 @@
-// existingWebcam.js
-// =================
+/*
+  existingWebcam.js
+  =================
+*/
 
-/* Copyright  2015 Yahoo Inc.
+/* Copyright  2017 Yahoo Inc.
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
- */
+*/
 
-define([
-  'core/utils',
-  'core/error',
-  'core/createAndGetGIF',
-  'core/screenShot',
-  'core/videoStream',
-  'API/isWebCamGIFSupported',
-], function(utils, error, createAndGetGIF, screenShot, videoStream, isWebCamGIFSupported) {
-  return function(obj) {
-    var lastCameraStream = obj.lastCameraStream,
-      callback = obj.callback,
-      webcamVideoElement = obj.webcamVideoElement,
-      options = obj.options;
+// Dependencies
+import utils from './utils';
+import error from './error';
+import createAndGetGIF from './createAndGetGIF';
+import screenShot from './screenShot';
+import videoStream from './videoStream';
+import isWebCamGIFSupported from '../API/isWebCamGIFSupported';
+
+export default function existingWebcam (obj = {}) {
+    const {
+        callback,
+        lastCameraStream,
+        options,
+        webcamVideoElement
+    } = obj;
 
     if (!isWebCamGIFSupported()) {
-      return callback(error.validate());
+        return callback(error.validate());
     }
+
     if (options.savedRenderingContexts.length) {
-      screenShot.getWebcamGIF(options, function(obj) {
-        callback(obj);
-      });
-      return;
+        screenShot.getGIF(options, (obj) => {
+            callback(obj);
+        });
+
+        return;
     }
-    videoStream.startVideoStreaming(function(obj) {
-      obj.options = options || {};
-      createAndGetGIF(obj, callback);
+
+    videoStream.startVideoStreaming((obj = {}) => {
+        obj.options = options || {};
+
+        createAndGetGIF(obj, callback);
     }, {
-      'lastCameraStream': lastCameraStream,
-      'callback': callback,
-      'webcamVideoElement': webcamVideoElement,
-      'crossOrigin': options.crossOrigin
+        lastCameraStream: lastCameraStream,
+        callback: callback,
+        webcamVideoElement: webcamVideoElement,
+        crossOrigin: options.crossOrigin
     });
-  };
-});
+};

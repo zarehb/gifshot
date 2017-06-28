@@ -1,26 +1,29 @@
-// animatedGIF.js
-// ==============
+/*
+  animatedGIF.js
+  ==============
+*/
 
-// Inspired from https://github.com/sole/Animated_GIF/blob/master/src/Animated_GIF.js
-
-/* Copyright  2015 Yahoo Inc.
+/* Copyright  2017 Yahoo Inc.
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
- */
+*/
 
-define([
-  'core/utils',
-  'core/processFrameWorker',
-  'dependencies/NeuQuant',
-  'dependencies/gifWriter'
-], function(utils, frameWorkerCode, NeuQuant, GifWriter) {
-  var AnimatedGIF = function(options) {
+// Dependencies
+import utils from './utils';
+import frameWorkerCode from './processFrameWorker';
+import NeuQuant from '../dependencies/NeuQuant';
+import GifWriter from '../dependencies/gifWriter';
+
+// Helpers
+const noop = () => {};
+
+const AnimatedGIF = function (options) {
     this.canvas = null;
     this.ctx = null;
     this.repeat = 0;
     this.frames = [];
     this.numRenderedFrames = 0;
-    this.onRenderCompleteCallback = utils.noop;
-    this.onRenderProgressCallback = utils.noop;
+    this.onRenderCompleteCallback = noop;
+    this.onRenderProgressCallback = noop;
     this.workers = [];
     this.availableWorkers = [];
     this.generatingGIF = false;
@@ -28,35 +31,39 @@ define([
 
     // Constructs and initializes the the web workers appropriately
     this.initializeWebWorkers(options);
-  };
+};
 
-  AnimatedGIF.prototype = {
-    'workerMethods': frameWorkerCode(),
-    'initializeWebWorkers': function(options) {
-      var processFrameWorkerCode = NeuQuant.toString() + '(' + frameWorkerCode.toString() + '());',
-        webWorkerObj,
-        objectUrl,
-        webWorker,
-        numWorkers,
-        x = -1,
-        workerError = '';
+AnimatedGIF.prototype = {
+  'workerMethods': frameWorkerCode(),
+  'initializeWebWorkers': function (options) {
+      const self = this;
+      const processFrameWorkerCode = NeuQuant.toString() + '(' + frameWorkerCode.toString() + '());';
+      let webWorkerObj;
+      let objectUrl;
+      let webWorker;
+      let numWorkers;
+      let x = -1;
+      let workerError = '';
 
       numWorkers = options.numWorkers;
 
       while (++x < numWorkers) {
-        webWorkerObj = utils.createWebWorker(processFrameWorkerCode);
-        if (utils.isObject(webWorkerObj)) {
-          objectUrl = webWorkerObj.objectUrl;
-          webWorker = webWorkerObj.worker;
-          this.workers.push({
-            'worker': webWorker,
-            'objectUrl': objectUrl
-          });
-          this.availableWorkers.push(webWorker);
-        } else {
-          workerError = webWorkerObj;
-          utils.webWorkerError = !!(webWorkerObj);
-        }
+          webWorkerObj = utils.createWebWorker(processFrameWorkerCode);
+
+          if (utils.isObject(webWorkerObj)) {
+              objectUrl = webWorkerObj.objectUrl;
+              webWorker = webWorkerObj.worker;
+
+              self.workers.push({
+                  worker: webWorker,
+                  objectUrl: objectUrl
+              });
+
+              self.availableWorkers.push(webWorker);
+          } else {
+              workerError = webWorkerObj;
+              utils.webWorkerError = !!(webWorkerObj);
+          }
       }
 
       this.workerError = workerError;
@@ -65,73 +72,79 @@ define([
       this.canvas.height = options.gifHeight;
       this.ctx = this.canvas.getContext('2d');
       this.frames = [];
-    },
-    // Return a worker for processing a frame
-    'getWorker': function() {
+  },
+  // Return a worker for processing a frame
+  getWorker: function () {
       return this.availableWorkers.pop();
-    },
-    // Restores a worker to the pool
-    'freeWorker': function(worker) {
+  },
+  // Restores a worker to the pool
+  freeWorker: function (worker) {
       this.availableWorkers.push(worker);
-    },
-    'byteMap': (function() {
-      var byteMap = [];
-      for (var i = 0; i < 256; i++) {
-        byteMap[i] = String.fromCharCode(i);
+  },
+  byteMap: (() => {
+      let byteMap = [];
+
+      for (let i = 0; i < 256; i++) {
+          byteMap[i] = String.fromCharCode(i);
       }
+
       return byteMap;
-    }()),
-    'bufferToString': function(buffer) {
-      var numberValues = buffer.length,
-        str = '',
-        x = -1;
+  })(),
+  bufferToString: function (buffer) {
+      const numberValues = buffer.length;
+      let str = '';
+      let x = -1;
 
       while (++x < numberValues) {
-        str += this.byteMap[buffer[x]];
+          str += this.byteMap[buffer[x]];
       }
 
       return str;
-    },
-    'onFrameFinished': function (progressCallback) {
+  },
+  onFrameFinished: function (progressCallback) {
       // The GIF is not written until we're done with all the frames
       // because they might not be processed in the same order
-      var self = this,
-        frames = self.frames,
-        options = self.options;
-        hasExistingImages = !!(options.images || []).length;
-        allDone = frames.every(function(frame) {
-          return !frame.beingProcessed && frame.done;
-        });
+      const self = this;
+      const frames = self.frames;
+      const options = self.options;
+      const hasExistingImages = !!(options.images || []).length;
+      const allDone = frames.every((frame) => {
+          return (
+              !frame.beingProcessed &&
+              frame.done
+          );
+      });
 
       self.numRenderedFrames++;
 
       if (hasExistingImages) {
-        progressCallback(self.numRenderedFrames / frames.length);
+          progressCallback(self.numRenderedFrames / frames.length);
       }
 
       self.onRenderProgressCallback(self.numRenderedFrames * 0.75 / frames.length);
 
       if (allDone) {
-        if (!self.generatingGIF) {
-          self.generateGIF(frames, self.onRenderCompleteCallback);
-        }
+          if (!self.generatingGIF) {
+              self.generateGIF(frames, self.onRenderCompleteCallback);
+          }
       } else {
-        utils.requestTimeout(function() {
-          self.processNextFrame();
-        }, 1);
+          utils.requestTimeout(function() {
+              self.processNextFrame();
+          }, 1);
       }
-
-    },
-    'processFrame': function(position) {
-      var AnimatedGifContext = this,
-        options = this.options,
-        progressCallback = options.progressCallback,
-        sampleInterval = options.sampleInterval,
-        frames = this.frames,
-        frame,
-        worker,
-        done = function(ev) {
-          var data = ev.data;
+  },
+  processFrame: function (position) {
+      const AnimatedGifContext = this;
+      const options = this.options;
+      const {
+          progressCallback,
+          sampleInterval
+      } = this.options;
+      const frames = this.frames;
+      let frame;
+      let worker;
+      const done = (ev = {}) => {
+          const data = ev.data;
 
           // Delete original data, and free memory
           delete(frame.data);
@@ -144,13 +157,14 @@ define([
           AnimatedGifContext.freeWorker(worker);
 
           AnimatedGifContext.onFrameFinished(progressCallback);
-        };
+      };
 
       frame = frames[position];
 
       if (frame.beingProcessed || frame.done) {
-        this.onFrameFinished();
-        return;
+          this.onFrameFinished();
+
+          return;
       }
 
       frame.sampleInterval = sampleInterval;
@@ -160,70 +174,76 @@ define([
       worker = this.getWorker();
 
       if (worker) {
-        // Process the frame in a web worker
-        worker.onmessage = done;
-        worker.postMessage(frame);
+          // Process the frame in a web worker
+          worker.onmessage = done;
+          worker.postMessage(frame);
       } else {
-        // Process the frame in the current thread
-        done({
-          'data': AnimatedGifContext.workerMethods.run(frame)
-        });
+          // Process the frame in the current thread
+          done({
+              'data': AnimatedGifContext.workerMethods.run(frame)
+          });
       }
-    },
-    'startRendering': function(completeCallback) {
+  },
+  startRendering: function (completeCallback) {
       this.onRenderCompleteCallback = completeCallback;
 
-      for (var i = 0; i < this.options.numWorkers && i < this.frames.length; i++) {
-        this.processFrame(i);
+      for (let i = 0; i < this.options.numWorkers && i < this.frames.length; i++) {
+          this.processFrame(i);
       }
-    },
-    'processNextFrame': function() {
-      var position = -1;
+  },
+  processNextFrame: function () {
+      let position = -1;
 
-      for (var i = 0; i < this.frames.length; i++) {
-        var frame = this.frames[i];
-        if (!frame.done && !frame.beingProcessed) {
-          position = i;
-          break;
-        }
+      for (let i = 0; i < this.frames.length; i++) {
+          const frame = this.frames[i];
+
+          if (!frame.done && !frame.beingProcessed) {
+              position = i;
+              break;
+          }
       }
 
       if (position >= 0) {
-        this.processFrame(position);
+          this.processFrame (position);
       }
-    },
-    // Takes the already processed data in frames and feeds it to a new
-    // GifWriter instance in order to get the binary GIF file
-    'generateGIF': function(frames, callback) {
+  },
+  // Takes the already processed data in frames and feeds it to a new
+  // GifWriter instance in order to get the binary GIF file
+  generateGIF: function (frames, callback) {
       // TODO: Weird: using a simple JS array instead of a typed array,
       // the files are WAY smaller o_o. Patches/explanations welcome!
-      var buffer = [], // new Uint8Array(width * height * frames.length * 5);
-        gifOptions = {
-          'loop': this.repeat
-        },
-        options = this.options,
-        interval = options.interval,
-        existingImages = options.images,
-        hasExistingImages = !!(existingImages.length),
-        height = options.gifHeight,
-        width = options.gifWidth,
-        gifWriter = new GifWriter(buffer, width, height, gifOptions),
-        onRenderProgressCallback = this.onRenderProgressCallback,
-        delay = hasExistingImages ? interval * 100 : 0,
-        bufferToString,
-        gif;
+      let buffer = []; // new Uint8Array(width * height * frames.length * 5);
+      let gifOptions = {
+          loop: this.repeat
+      };
+      const options = this.options;
+      const {
+          interval
+      } = options;
+      const frameDuration = options.frameDuration;
+      const existingImages = options.images;
+      const hasExistingImages = !!(existingImages.length);
+      const height = options.gifHeight;
+      const width = options.gifWidth;
+      const gifWriter = new GifWriter(buffer, width, height, gifOptions);
+      const onRenderProgressCallback = this.onRenderProgressCallback;
+      const delay = hasExistingImages ? interval * 100 : 0;
+      let bufferToString;
+      let gif;
 
       this.generatingGIF = true;
 
-      utils.each(frames, function(iterator, frame) {
-        var framePalette = frame.palette;
+      utils.each(frames, (iterator, frame) => {
+          const framePalette = frame.palette;
 
-        onRenderProgressCallback(0.75 + 0.25 * frame.position * 1.0 / frames.length);
+          onRenderProgressCallback(0.75 + 0.25 * frame.position * 1.0 / frames.length);
 
-        gifWriter.addFrame(0, 0, width, height, frame.pixels, {
-          palette: framePalette,
-          delay: delay
-        });
+          for (let i = 0; i < frameDuration; i ++) {
+              gifWriter.addFrame(0, 0, width, height, frame.pixels, {
+                  palette: framePalette,
+                  delay: delay
+              });
+          }
       });
 
       gifWriter.end();
@@ -235,103 +255,107 @@ define([
       this.generatingGIF = false;
 
       if (utils.isFunction(callback)) {
-        bufferToString = this.bufferToString(buffer);
-        gif = 'data:image/gif;base64,' + utils.btoa(bufferToString);
-        callback(gif);
+          bufferToString = this.bufferToString(buffer);
+          gif = 'data:image/gif;base64,' + utils.btoa(bufferToString);
+
+          callback(gif);
       }
-    },
-    // From GIF: 0 = loop forever, null = not looping, n > 0 = loop n times and stop
-    'setRepeat': function(r) {
+  },
+  // From GIF: 0 = loop forever, null = not looping, n > 0 = loop n times and stop
+  setRepeat: function (r) {
       this.repeat = r;
-    },
-    'addFrame': function(element, gifshotOptions) {
+  },
+  addFrame: function (element, gifshotOptions) {
       gifshotOptions = utils.isObject(gifshotOptions) ? gifshotOptions : {};
 
-      var self = this,
-        ctx = self.ctx,
-        options = self.options,
-        width = options.gifWidth,
-        height = options.gifHeight,
-        gifHeight = gifshotOptions.gifHeight,
-        gifWidth = gifshotOptions.gifWidth,
-        text = gifshotOptions.text,
-        fontWeight = gifshotOptions.fontWeight,
-        fontSize = utils.getFontSize(gifshotOptions),
-        fontFamily = gifshotOptions.fontFamily,
-        fontColor = gifshotOptions.fontColor,
-        textAlign = gifshotOptions.textAlign,
-        textBaseline = gifshotOptions.textBaseline,
-        textXCoordinate = gifshotOptions.textXCoordinate ? gifshotOptions.textXCoordinate : textAlign === 'left' ? 1 : textAlign === 'right' ? width : width / 2,
-        textYCoordinate = gifshotOptions.textYCoordinate ? gifshotOptions.textYCoordinate : textBaseline === 'top' ? 1 : textBaseline === 'center' ? height / 2 : height,
-        font = fontWeight + ' ' + fontSize + ' ' + fontFamily,
-        imageData;
+      const self = this;
+      const ctx = self.ctx;
+      const options = self.options;
+      const width = options.gifWidth;
+      const height = options.gifHeight;
+      const fontSize = utils.getFontSize(gifshotOptions);
+      const {
+          fontColor,
+          fontFamily,
+          fontWeight,
+          gifHeight,
+          gifWidth,
+          text,
+          textAlign,
+          textBaseline
+      } = gifshotOptions;
+      const textXCoordinate = gifshotOptions.textXCoordinate ? gifshotOptions.textXCoordinate : textAlign === 'left' ? 1 : textAlign === 'right' ? width : width / 2;
+      const textYCoordinate = gifshotOptions.textYCoordinate ? gifshotOptions.textYCoordinate : textBaseline === 'top' ? 1 : textBaseline === 'center' ? height / 2 : height;
+      const font = fontWeight + ' ' + fontSize + ' ' + fontFamily;
+      let imageData;
 
       try {
-        ctx.drawImage(element, 0, 0, width, height);
+          ctx.drawImage(element, 0, 0, width, height);
 
-        if (text) {
-          ctx.font = font;
-          ctx.fillStyle = fontColor;
-          ctx.textAlign = textAlign;
-          ctx.textBaseline = textBaseline;
-          ctx.fillText(text, textXCoordinate, textYCoordinate);
-        }
+          if (text) {
+              ctx.font = font;
+              ctx.fillStyle = fontColor;
+              ctx.textAlign = textAlign;
+              ctx.textBaseline = textBaseline;
+              ctx.fillText(text, textXCoordinate, textYCoordinate);
+          }
 
-        imageData = ctx.getImageData(0, 0, width, height);
+          imageData = ctx.getImageData(0, 0, width, height);
 
-        self.addFrameImageData(imageData);
+          self.addFrameImageData(imageData);
       } catch (e) {
-        return '' + e;
+          return '' + e;
       }
-    },
-    'addFrameImageData': function(imageData) {
-      var frames = this.frames,
-        imageDataArray = imageData.data;
+  },
+  addFrameImageData: function (imageData = {}) {
+      const frames = this.frames;
+      const imageDataArray = imageData.data;
 
       this.frames.push({
-        'data': imageDataArray,
-        'width': imageData.width,
-        'height': imageData.height,
-        'palette': null,
-        'dithering': null,
-        'done': false,
-        'beingProcessed': false,
-        'position': frames.length
+          'data': imageDataArray,
+          'width': imageData.width,
+          'height': imageData.height,
+          'palette': null,
+          'dithering': null,
+          'done': false,
+          'beingProcessed': false,
+          'position': frames.length
       });
-    },
-    'onRenderProgress': function(callback) {
+  },
+  onRenderProgress: function (callback) {
       this.onRenderProgressCallback = callback;
-    },
-    'isRendering': function() {
+  },
+  isRendering: function () {
       return this.generatingGIF;
-    },
-    'getBase64GIF': function(completeCallback) {
-      var self = this,
-        onRenderComplete = function(gif) {
+  },
+  getBase64GIF: function (completeCallback) {
+      const self = this;
+      const onRenderComplete = (gif) => {
           self.destroyWorkers();
-          utils.requestTimeout(function() {
-            completeCallback(gif);
+
+          utils.requestTimeout(() => {
+              completeCallback(gif);
           }, 0);
-        };
+      };
 
       self.startRendering(onRenderComplete);
-    },
-    'destroyWorkers': function() {
+  },
+  destroyWorkers: function () {
       if (this.workerError) {
-        return;
+          return;
       }
 
-      var workers = this.workers;
+      const workers = this.workers;
 
       // Explicitly ask web workers to die so they are explicitly GC'ed
-      utils.each(workers, function(iterator, workerObj) {
-        var worker = workerObj.worker,
-          objectUrl = workerObj.objectUrl;
+      utils.each(workers, (iterator, workerObj) => {
+          const worker = workerObj.worker;
+          const objectUrl = workerObj.objectUrl;
 
-        worker.terminate();
-        utils.URL.revokeObjectURL(objectUrl);
+          worker.terminate();
+          utils.URL.revokeObjectURL(objectUrl);
       });
-    }
-  };
-  return AnimatedGIF;
-});
+  }
+};
+
+export default AnimatedGIF;

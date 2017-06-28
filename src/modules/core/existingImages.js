@@ -1,91 +1,126 @@
-// existingImages.js
-// =================
+/*
+  existingImages.js
+  =================
+*/
 
-/* Copyright  2015 Yahoo Inc.
+/* Copyright  2017 Yahoo Inc.
  * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
- */
+*/
 
-define([
-  'core/utils',
-  'core/AnimatedGIF',
-  'core/getBase64GIF',
-  'core/error'
-], function(utils, AnimatedGIF, getBase64GIF, error) {
-  return function(obj) {
-    var images = obj.images,
-      imagesLength = obj.imagesLength,
-      callback = obj.callback,
-      options = obj.options,
-      skipObj = {
+import utils from './utils';
+import AnimatedGIF from './AnimatedGIF';
+import getBase64GIF from './getBase64GIF';
+import error from './error';
+
+export default function existingImages (obj = {}) {
+    const self = this;
+    const {
+        callback,
+        images,
+        options
+    } = obj;
+    let imagesLength = obj.imagesLength;
+    const skipObj = {
         'getUserMedia': true,
         'window.URL': true
-      },
-      errorObj = error.validate(skipObj),
-      loadedImages = [ ],
-      loadedImagesLength = 0,
-      tempImage,
-      ag;
+    };
+    const errorObj = error.validate(skipObj);
+    let loadedImages = [];
+    let loadedImagesLength = 0;
+    let tempImage;
+    let ag;
 
     if (errorObj.error) {
-      return callback(errorObj);
+        return callback(errorObj);
     }
 
     // change workerPath to point to where Animated_GIF.worker.js is
     ag = new AnimatedGIF(options);
 
-    utils.each(images, function(index, currentImage) {
-      if (utils.isElement(currentImage)) {
-        if (options.crossOrigin) {
-          currentImage.crossOrigin = options.crossOrigin;
-        }
-        loadedImages[index] = currentImage;
-        loadedImagesLength += 1;
-        
-        if (loadedImagesLength === imagesLength) {
-          addLoadedImagesToGif();
-        }
-      } else if (utils.isString(currentImage)) {
-        tempImage = document.createElement('img');
-        if (options.crossOrigin) {
-          tempImage.crossOrigin = options.crossOrigin;
-        }
-        tempImage.onerror = function(e) {
-          // If there is an error, ignore the image
-          if (loadedImages.length > index) {
-            loadedImages[index] = undefined;
-          }
-        }
+    utils.each(images, function (index, image) {
+        let currentImage = image;
 
-        (function(tempImage) {
-          tempImage.onload = function() {
-            loadedImages[index] = tempImage;
+        if (image.src) {
+            currentImage = currentImage.src;
+        }
+        if (utils.isElement(currentImage)) {
+            if (options.crossOrigin) {
+                currentImage.crossOrigin = options.crossOrigin;
+            }
+
+            loadedImages[index] = currentImage;
             loadedImagesLength += 1;
 
             if (loadedImagesLength === imagesLength) {
-              addLoadedImagesToGif();
+                addLoadedImagesToGif();
             }
-            utils.removeElement(tempImage);
-          };
-        }(tempImage));
+        } else if (utils.isString(currentImage)) {
+            tempImage = new Image();
 
-        tempImage.src = currentImage;
+            if (options.crossOrigin) {
+                tempImage.crossOrigin = options.crossOrigin;
+            }
 
-        utils.setCSSAttr(tempImage, {
-          'position': 'fixed',
-          'opacity': '0'
-        });
+            (function (tempImage) {
+                if(image.text) {
+                    tempImage.text = image.text;
+                }
 
-        document.body.appendChild(tempImage);
-      }
+                tempImage.onerror = function (e) {
+                    let obj;
+
+                    --imagesLength; // skips over images that error out
+
+                    if (imagesLength === 0) {
+                        obj = {};
+                        obj.error = 'None of the requested images was capable of being retrieved';
+
+                        return callback(obj);
+                    }
+                };
+
+                tempImage.onload = function (e) {
+                    if(image.text) {
+                        loadedImages[index] = {
+                            img:tempImage,
+                            text: tempImage.text
+                        };
+                    } else {
+                        loadedImages[index] = tempImage;
+                    }
+
+                    loadedImagesLength += 1;
+
+                    if (loadedImagesLength === imagesLength) {
+                        addLoadedImagesToGif();
+                    }
+
+                    utils.removeElement(tempImage);
+                };
+
+                tempImage.src = currentImage;
+            }(tempImage));
+
+            utils.setCSSAttr(tempImage, {
+                position: 'fixed',
+                opacity: '0'
+            });
+
+            document.body.appendChild(tempImage);
+        }
     });
 
     function addLoadedImagesToGif () {
-      utils.each(loadedImages, function(index, loadedImage) {
-        if (loadedImage) {
-          ag.addFrame(loadedImage, options);
-        }
-      });
-      getBase64GIF(ag, callback);
+        utils.each(loadedImages, function (index, loadedImage) {
+            if (loadedImage) {
+                if(loadedImage.text) {
+                    ag.addFrame(loadedImage.img, options, loadedImage.text);
+                } else {
+                    ag.addFrame(loadedImage, options);
+                }
+            }
+        });
+
+        getBase64GIF(ag, callback);
     }
-  };
-});
+};

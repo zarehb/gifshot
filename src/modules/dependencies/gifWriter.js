@@ -1,5 +1,7 @@
-// gifWriter.js
-// ============
+/*
+  gifWriter.js
+  ============
+*/
 
 // (c) Dean McNamee <dean@gmail.com>, 2013.
 //
@@ -27,10 +29,7 @@
 // including animation and compression.  It does not rely on any specific
 // underlying system, so should run in the browser, Node, or Plask.
 
-define([
-  'core/utils'
-], function(utils) {
-  return function gifWriter(buf, width, height, gopts) {
+export default function gifWriter (buf, width, height, gopts) {
     var p = 0;
 
     gopts = gopts === undefined ? {} : gopts;
@@ -360,5 +359,4 @@ define([
       }
       return p;
     }
-  }
-});
+}

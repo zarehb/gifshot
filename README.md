@@ -251,6 +251,8 @@ gifshot.takeSnapShot(function(obj) {
 // The number of frames to use to create the animated GIF
 // Note: Each frame is captured every 100 milleseconds of a video and every ms for existing images
 'numFrames': 10,
+// The amount of time (10 = 1s) to stay on each frame
+'frameDuration': 1,
 // The text that covers the animated GIF
 'text': '',
 // The font weight of the text that covers the animated GIF
