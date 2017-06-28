@@ -2320,31 +2320,33 @@ var videoStream = {
 
         videoElement.play();
 
-        utils.requestTimeout(function checkLoadedData() {
-            checkLoadedData.count = checkLoadedData.count || 0;
+        utils.requestTimeout(function () {
+            utils.requestTimeout(function checkLoadedData() {
+                checkLoadedData.count = checkLoadedData.count || 0;
 
-            if (videoStream.loadedData === true) {
-                videoStream.findVideoSize({
-                    videoElement: videoElement,
-                    cameraStream: cameraStream,
-                    completedCallback: completedCallback
-                });
-
-                videoStream.loadedData = false;
-            } else {
-                checkLoadedData.count += 1;
-
-                if (checkLoadedData.count > 10) {
+                if (videoStream.loadedData === true) {
                     videoStream.findVideoSize({
                         videoElement: videoElement,
                         cameraStream: cameraStream,
                         completedCallback: completedCallback
                     });
+
+                    videoStream.loadedData = false;
                 } else {
-                    checkLoadedData();
+                    checkLoadedData.count += 1;
+
+                    if (checkLoadedData.count > 10) {
+                        videoStream.findVideoSize({
+                            videoElement: videoElement,
+                            cameraStream: cameraStream,
+                            completedCallback: completedCallback
+                        });
+                    } else {
+                        checkLoadedData();
+                    }
                 }
-            }
-        }, 100);
+            }, 100);
+        }, 400);
     },
     startStreaming: function startStreaming(obj) {
         var errorCallback = utils.isFunction(obj.error) ? obj.error : utils.noop;
