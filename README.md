@@ -320,7 +320,7 @@ If your PR is a code change:
 
 gifshot would not have been possible without the help/inspiration of the following libraries/awesome people:
 
-###Used
+### Used
 
 - [NeuQuant](http://members.ozemail.com.au/~dekker/NEUQUANT.HTML)
  * An image quantization algorithm to reduce the number of colors required to represent the image (thus decreasing the file size). This script was ported from C into Java by Kevin Weiner and then to [ActionScript 3](http://www.bytearray.org/?p=93) by Thibault Imbert, and to [JavaScript](http://antimatter15.com/wp/2010/07/javascript-to-animated-gif/) by antimatter15, and fixed, patched and revised by [sole](http://soledadpenades.com).
@@ -332,7 +332,7 @@ gifshot would not have been possible without the help/inspiration of the followi
  * Copyright (c) Dean McNamee, 2013 - [MIT License](https://github.com/deanm/omggif)
 
 
-###Inspiration
+### Inspiration
 
 - [Soledad Penadés](https://github.com/sole)'s [gumhelper.js](https://github.com/sole/gumhelper)
  * A module wrapping WebRTC's getUserMedia
