@@ -4,6 +4,7 @@
     var createGIFButton = document.querySelector('#create-gif');
     var gifSource = document.querySelector('#GIFSource');
     var gifType = document.querySelector('#GIFType');
+    var filter = document.querySelector("#filter");
     var interval = document.querySelector("#interval");
     var numFrames = document.querySelector("#numFrames");
     var frameDuration = document.querySelector("#frameDuration");
@@ -30,6 +31,7 @@
             gifHeight: Number(gifHeight.value),
             images: gifSource.value === 'images' ? ['http://i.imgur.com/2OO33vX.png', 'http://i.imgur.com/qOwVaSN.png', 'http://i.imgur.com/Vo5mFZJ.gif'] : false,
             video: gifSource.value === 'video' ? ['example.mp4', 'example.ogv'] : false,
+            filter: filter.value,
             interval: Number(interval.value),
             numFrames: Number(numFrames.value),
             frameDuration: Number(frameDuration.value),
