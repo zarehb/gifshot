@@ -275,6 +275,7 @@ AnimatedGIF.prototype = {
       const height = options.gifHeight;
       const fontSize = utils.getFontSize(gifshotOptions);
       const {
+          filter,
           fontColor,
           fontFamily,
           fontWeight,
@@ -290,6 +291,8 @@ AnimatedGIF.prototype = {
       let imageData;
 
       try {
+          ctx.filter = filter;
+
           ctx.drawImage(element, 0, 0, width, height);
 
           if (text) {

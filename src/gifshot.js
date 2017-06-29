@@ -378,6 +378,7 @@ var noop = function noop() {};
 var defaultOptions = {
     sampleInterval: 10,
     numWorkers: 2,
+    filter: '',
     gifWidth: 200,
     gifHeight: 200,
     interval: 0.1,
@@ -1794,6 +1795,7 @@ AnimatedGIF.prototype = {
         var height = options.gifHeight;
         var fontSize = utils.getFontSize(gifshotOptions);
         var _gifshotOptions = gifshotOptions,
+            filter = _gifshotOptions.filter,
             fontColor = _gifshotOptions.fontColor,
             fontFamily = _gifshotOptions.fontFamily,
             fontWeight = _gifshotOptions.fontWeight,
@@ -1809,6 +1811,8 @@ AnimatedGIF.prototype = {
         var imageData = void 0;
 
         try {
+            ctx.filter = filter;
+
             ctx.drawImage(element, 0, 0, width, height);
 
             if (text) {
@@ -2049,6 +2053,7 @@ var screenShot = {
         var hasExistingImages = !!existingImages.length;
         var cameraStream = options.cameraStream,
             crop = options.crop,
+            filter = options.filter,
             fontColor = options.fontColor,
             fontFamily = options.fontFamily,
             fontWeight = options.fontWeight,
@@ -2111,6 +2116,8 @@ var screenShot = {
                     if (sourceY < 0) {
                         sourceY = 0;
                     }
+
+                    context.filter = filter;
 
                     context.drawImage(videoElement, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, gifWidth, gifHeight);
 

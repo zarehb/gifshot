@@ -13,6 +13,7 @@ const noop = () => {};
 const defaultOptions = {
     sampleInterval: 10,
     numWorkers: 2,
+    filter: '',
     gifWidth: 200,
     gifHeight: 200,
     interval: 0.1,
