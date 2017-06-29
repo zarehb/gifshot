@@ -25,6 +25,7 @@ const screenShot = {
         const {
             cameraStream,
             crop,
+            filter,
             fontColor,
             fontFamily,
             fontWeight,
@@ -87,6 +88,8 @@ const screenShot = {
                     if (sourceY < 0) {
                         sourceY = 0;
                     }
+
+                    context.filter = filter;
 
                     context.drawImage(videoElement, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, gifWidth, gifHeight);
 

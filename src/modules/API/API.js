@@ -30,5 +30,5 @@ export const API = {
   'isWebCamGIFSupported': isWebCamGIFSupported,
   'isExistingVideoGIFSupported': isExistingVideoGIFSupported,
   'isExistingImagesGIFSupported': isExistingImagesGIFSupported,
-  'VERSION': '0.4.3'
+  'VERSION': '0.4.4'
 };
