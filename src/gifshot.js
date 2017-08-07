@@ -2361,6 +2361,10 @@ var videoStream = {
             videoElement.crossOrigin = options.crossOrigin;
         }
 
+        if (options.offset) {
+            videoElement.currentTime = options.offset;
+        }
+
         videoElement.autoplay = true;
         videoElement.loop = true;
         videoElement.muted = true;
