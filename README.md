@@ -50,12 +50,12 @@ gifshot uses the following technologies:
 ```javascript
 // By default, a user's webcam is used to create the animated GIF
 gifshot.createGIF({}, function(obj) {
-	if(!obj.error) {
-		var image = obj.image,
-		animatedImage = document.createElement('img');
-		animatedImage.src = image;
-		document.body.appendChild(animatedImage);
-	}
+  if(!obj.error) {
+    var image = obj.image,
+    animatedImage = document.createElement('img');
+    animatedImage.src = image;
+    document.body.appendChild(animatedImage);
+  }
 });
 ```
 
@@ -82,14 +82,14 @@ Creates an animated GIF from either a webcam stream, an existing video (e.g. mp4
 
 ```javascript
 gifshot.createGIF({}, function(obj) {
-	// callback object properties
-	// --------------------------
-	// image - Base 64 image
-	// cameraStream - The webRTC MediaStream object
-	// error - Boolean that determines if an error occurred
-	// errorCode - Helpful error label
-	// errorMsg - Helpful error message
-	// savedRenderingContexts - An array of canvas image data (will only be set if the saveRenderingContexts option was used)
+  // callback object properties
+  // --------------------------
+  // image - Base 64 image
+  // cameraStream - The webRTC MediaStream object
+  // error - Boolean that determines if an error occurred
+  // errorCode - Helpful error label
+  // errorMsg - Helpful error message
+  // savedRenderingContexts - An array of canvas image data (will only be set if the saveRenderingContexts option was used)
 });
 ```
 
@@ -103,13 +103,13 @@ Takes a snap shot (not animated) image from a webcam stream or existing video
 
 ```javascript
 gifshot.takeSnapShot({}, function(obj) {
-	// callback object properties
-	// --------------------------
-	// image - Base 64 image
-	// error - Boolean that determines if an error occurred
-	// errorCode - Helpful error label
-	// errorMsg - Helpful error message
-	// savedRenderingContexts - An array of canvas image data (will only be set if the saveRenderingContexts option was used)
+  // callback object properties
+  // --------------------------
+  // image - Base 64 image
+  // error - Boolean that determines if an error occurred
+  // errorCode - Helpful error label
+  // errorMsg - Helpful error message
+  // savedRenderingContexts - An array of canvas image data (will only be set if the saveRenderingContexts option was used)
 });
 ```
 
@@ -163,12 +163,12 @@ gifshot.isExistingImagesGIFSupported();
 
 ```javascript
 gifshot.createGIF(function(obj) {
-	if(!obj.error) {
-		var image = obj.image,
-		animatedImage = document.createElement('img');
-		animatedImage.src = image;
-		document.body.appendChild(animatedImage);
-	}
+  if(!obj.error) {
+    var image = obj.image,
+    animatedImage = document.createElement('img');
+    animatedImage.src = image;
+    document.body.appendChild(animatedImage);
+  }
 });
 ```
 
@@ -176,14 +176,14 @@ gifshot.createGIF(function(obj) {
 
 ```javascript
 gifshot.createGIF({
-	'video': ['example.mp4', 'example.ogv']
+  'video': ['example.mp4', 'example.ogv']
 },function(obj) {
-	if(!obj.error) {
-		var image = obj.image,
-		animatedImage = document.createElement('img');
-		animatedImage.src = image;
-		document.body.appendChild(animatedImage);
-	}
+  if(!obj.error) {
+    var image = obj.image,
+    animatedImage = document.createElement('img');
+    animatedImage.src = image;
+    document.body.appendChild(animatedImage);
+  }
 });
 ```
 
@@ -191,14 +191,14 @@ gifshot.createGIF({
 
 ```javascript
 gifshot.createGIF({
-	'images': ['http://i.imgur.com/2OO33vX.jpg', 'http://i.imgur.com/qOwVaSN.png', 'http://i.imgur.com/Vo5mFZJ.gif']
+  'images': ['http://i.imgur.com/2OO33vX.jpg', 'http://i.imgur.com/qOwVaSN.png', 'http://i.imgur.com/Vo5mFZJ.gif']
 },function(obj) {
-	if(!obj.error) {
-		var image = obj.image,
-		animatedImage = document.createElement('img');
-		animatedImage.src = image;
-		document.body.appendChild(animatedImage);
-	}
+  if(!obj.error) {
+    var image = obj.image,
+    animatedImage = document.createElement('img');
+    animatedImage.src = image;
+    document.body.appendChild(animatedImage);
+  }
 });
 ```
 
@@ -206,12 +206,12 @@ gifshot.createGIF({
 
 ```javascript
 gifshot.takeSnapShot(function(obj) {
-	if(!obj.error) {
-		var image = obj.image,
-		animatedImage = document.createElement('img');
-		animatedImage.src = image;
-		document.body.appendChild(animatedImage);
-	}
+  if(!obj.error) {
+    var image = obj.image,
+    animatedImage = document.createElement('img');
+    animatedImage.src = image;
+    document.body.appendChild(animatedImage);
+  }
 });
 ```
 
@@ -250,6 +250,8 @@ gifshot.takeSnapShot(function(obj) {
 'filter': '',
 // The amount of time (in seconds) to wait between each frame capture
 'interval': 0.1,
+// The amount of time (in seconds) to start capturing the GIF (only for HTML5 videos)
+'offset': null,
 // The number of frames to use to create the animated GIF
 // Note: Each frame is captured every 100 milleseconds of a video and every ms for existing images
 'numFrames': 10,

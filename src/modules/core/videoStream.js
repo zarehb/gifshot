@@ -146,6 +146,9 @@ const videoStream = {
         videoElement.muted = true;
         videoElement.addEventListener('loadeddata', (event) => {
             videoStream.loadedData = true;
+            if (options.offset) {
+              videoElement.currentTime = options.offset;
+            }
         });
 
         if (existingVideo) {
