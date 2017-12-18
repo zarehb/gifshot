@@ -2,17 +2,17 @@
 /* Container used for styling the custom select, the buttom class below adds the bg gradient, corners, etc. */
 .custom-select {
   position: relative;
-  display:block;
-  margin-top:0.5em;
-  padding:0;
+  display: block;
+  margin-top: 0.5em;
+  padding: 0;
 }
 
 
 /* This is the native select, we're making everything but the text invisible so we can see the button styles in the wrapper */
 .custom-select select {
-  width:100%;
-  margin:0;
-  background:none;
+  width: 100%;
+  margin: 0;
+  background: none;
   border: 1px solid transparent;
   outline: none;
   /* Prefixed box-sizing rules necessary for older browsers */
@@ -23,26 +23,26 @@
   appearance: none;
   -webkit-appearance: none;
   /* Font size must the 16px or larger to prevent iOS page zoom on focus */
-  font-size:1em;
+  font-size: 1em;
   /* General select styles: change as needed */
   font-family: helvetica, sans-serif;
   font-weight: bold;
   color: #444;
   padding: .6em 1.9em .5em .8em;
-  line-height:1.3;
+  line-height: 1.3;
 }
 
 
 /* Custom arrow sits on top of the select - could be an image, SVG, icon font, etc. or the arrow could just baked into the bg image on the select. Note this si a 2x image so it will look bad in browsers that don't support background-size. In production, you'd handle this resolution switch via media query but this is a demo. */
     
 .custom-select::after {
-  content: "";
+  content: '';
   position: absolute;
   width: 9px;
   height: 8px;
   top: 50%;
   right: 1em;
-  margin-top:-4px;
+  margin-top: -4px;
   background-image: url(../../images/down-arrow.png);
   background-repeat: no-repeat;
   background-size: 100%;
@@ -59,16 +59,16 @@
 
 /* Focus style */
 .custom-select select:focus {
-  outline:none;
+  outline: none;
   box-shadow: 0 0 1px 3px rgba(180,222,250, 1);
-  background-color:transparent;
+  background-color: transparent;
   color: #222;
-  border:1px solid #aaa;
+  border: 1px solid #aaa;
 }
 
 /* Set options to normal weight */
 .custom-select option {
-  font-weight:normal;
+  font-weight: normal;
 }
 
 

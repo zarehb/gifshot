@@ -2307,13 +2307,21 @@ var videoStream = {
                 videoElement.src = existingVideo;
                 videoElement.innerHTML = '<source src="' + existingVideo + '" type="video/' + utils.getExtension(existingVideo) + '" />';
             } else if (existingVideo instanceof Blob) {
-                videoElement.src = utils.URL.createObjectURL(existingVideo);
+                try {
+                    videoElement.src = utils.URL.createObjectURL(existingVideo);
+                } catch (e) {}
+
                 videoElement.innerHTML = '<source src="' + existingVideo + '" type="' + existingVideo.type + '" />';
             }
         } else if (videoElement.mozSrcObject) {
             videoElement.mozSrcObject = cameraStream;
         } else if (utils.URL) {
-            videoElement.src = utils.URL.createObjectURL(cameraStream);
+            try {
+                videoElement.srcObject = cameraStream;
+                videoElement.src = utils.URL.createObjectURL(cameraStream);
+            } catch (e) {
+                videoElement.srcObject = cameraStream;
+            }
         }
 
         videoElement.play();
