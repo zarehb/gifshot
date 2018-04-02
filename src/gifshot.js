@@ -1785,7 +1785,7 @@ AnimatedGIF.prototype = {
     setRepeat: function setRepeat(r) {
         this.repeat = r;
     },
-    addFrame: function addFrame(element, gifshotOptions) {
+    addFrame: function addFrame(element, gifshotOptions, frameText) {
         gifshotOptions = utils.isObject(gifshotOptions) ? gifshotOptions : {};
 
         var self = this;
@@ -1808,6 +1808,7 @@ AnimatedGIF.prototype = {
         var textXCoordinate = gifshotOptions.textXCoordinate ? gifshotOptions.textXCoordinate : textAlign === 'left' ? 1 : textAlign === 'right' ? width : width / 2;
         var textYCoordinate = gifshotOptions.textYCoordinate ? gifshotOptions.textYCoordinate : textBaseline === 'top' ? 1 : textBaseline === 'center' ? height / 2 : height;
         var font = fontWeight + ' ' + fontSize + ' ' + fontFamily;
+        var textToUse = frameText ? frameText : text;
         var imageData = void 0;
 
         try {
@@ -1815,12 +1816,12 @@ AnimatedGIF.prototype = {
 
             ctx.drawImage(element, 0, 0, width, height);
 
-            if (text) {
+            if (textToUse) {
                 ctx.font = font;
                 ctx.fillStyle = fontColor;
                 ctx.textAlign = textAlign;
                 ctx.textBaseline = textBaseline;
-                ctx.fillText(text, textXCoordinate, textYCoordinate);
+                ctx.fillText(textToUse, textXCoordinate, textYCoordinate);
             }
 
             imageData = ctx.getImageData(0, 0, width, height);
@@ -2793,7 +2794,7 @@ var API = {
   'isWebCamGIFSupported': isWebCamGIFSupported,
   'isExistingVideoGIFSupported': isExistingVideoGIFSupported,
   'isExistingImagesGIFSupported': isSupported$1,
-  'VERSION': '0.4.4'
+  'VERSION': '0.4.5'
 };
 
 /*
