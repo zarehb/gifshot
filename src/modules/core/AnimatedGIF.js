@@ -265,7 +265,7 @@ AnimatedGIF.prototype = {
   setRepeat: function (r) {
       this.repeat = r;
   },
-  addFrame: function (element, gifshotOptions) {
+  addFrame: function (element, gifshotOptions, frameText) {
       gifshotOptions = utils.isObject(gifshotOptions) ? gifshotOptions : {};
 
       const self = this;
@@ -288,19 +288,21 @@ AnimatedGIF.prototype = {
       const textXCoordinate = gifshotOptions.textXCoordinate ? gifshotOptions.textXCoordinate : textAlign === 'left' ? 1 : textAlign === 'right' ? width : width / 2;
       const textYCoordinate = gifshotOptions.textYCoordinate ? gifshotOptions.textYCoordinate : textBaseline === 'top' ? 1 : textBaseline === 'center' ? height / 2 : height;
       const font = fontWeight + ' ' + fontSize + ' ' + fontFamily;
+      const textToUse = (frameText && gifshotOptions.showFrameText) ? frameText : text;
       let imageData;
+
 
       try {
           ctx.filter = filter;
 
           ctx.drawImage(element, 0, 0, width, height);
 
-          if (text) {
+          if (textToUse) {
               ctx.font = font;
               ctx.fillStyle = fontColor;
               ctx.textAlign = textAlign;
               ctx.textBaseline = textBaseline;
-              ctx.fillText(text, textXCoordinate, textYCoordinate);
+              ctx.fillText(textToUse, textXCoordinate, textYCoordinate);
           }
 
           imageData = ctx.getImageData(0, 0, width, height);

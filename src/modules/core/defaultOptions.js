@@ -39,6 +39,7 @@ const defaultOptions = {
     completeCallback: noop,
     saveRenderingContexts: false,
     savedRenderingContexts: [],
+    showFrameText: true,
     crossOrigin: 'Anonymous'
 };
 

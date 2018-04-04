@@ -201,6 +201,23 @@ gifshot.createGIF({
   }
 });
 ```
+**Images With Frame-Specific Text**
+```javascript
+gifshot.createGIF({
+  'images': [
+    { src:'http://i.imgur.com/2OO33vX.jpg', text:'First image text' },
+    { src:'http://i.imgur.com/qOwVaSN.png', text:'Second image text' },
+    { src:'http://i.imgur.com/Vo5mFZJ.gif', text:'Third image text' }
+  ]
+},function(obj) {
+  if(!obj.error) {
+    var image = obj.image,
+    animatedImage = document.createElement('img');
+    animatedImage.src = image;
+    document.body.appendChild(animatedImage);
+  }
+});
+```
 
 **Snap Shot**
 
@@ -298,9 +315,12 @@ gifshot.takeSnapShot(function(obj) {
 // Expects an array of canvas image data
 // Note: If you set the saveRenderingContexts option to true, then you get the savedRenderingContexts
 //	in the createGIF callback function
-'savedRenderingContexts': []
+'savedRenderingContexts': [],
 // When existing images or videos are requested used, we set a CORS attribute on the request.
 // Options are 'Anonymous', 'use-credentials', or a falsy value (like '') to not set a CORS attribute.
+'showFrameText': true,
+// If frame-specific text is supplied with the image array, you can force the frame-specific text to not be displayed
+// by making this option 'false'.
 'crossOrigin': 'Anonymous'
 ```
 
