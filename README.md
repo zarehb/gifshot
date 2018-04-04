@@ -201,6 +201,23 @@ gifshot.createGIF({
   }
 });
 ```
+**Images With Frame-Specific Text**
+```javascript
+gifshot.createGIF({
+  'images': [
+    { src:'http://i.imgur.com/2OO33vX.jpg', text:'First image text' },
+    { src:'http://i.imgur.com/qOwVaSN.png', text:'Second image text' },
+    { src:'http://i.imgur.com/Vo5mFZJ.gif', text:'Third image text' }
+  ]
+},function(obj) {
+  if(!obj.error) {
+    var image = obj.image,
+    animatedImage = document.createElement('img');
+    animatedImage.src = image;
+    document.body.appendChild(animatedImage);
+  }
+});
+```
 
 **Snap Shot**
 
