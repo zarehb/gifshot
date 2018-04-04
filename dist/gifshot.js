@@ -411,6 +411,7 @@ var defaultOptions = {
     completeCallback: noop,
     saveRenderingContexts: false,
     savedRenderingContexts: [],
+    showFrameText: true,
     crossOrigin: 'Anonymous'
 };
 
@@ -1815,7 +1816,7 @@ AnimatedGIF.prototype = {
         var textXCoordinate = gifshotOptions.textXCoordinate ? gifshotOptions.textXCoordinate : textAlign === 'left' ? 1 : textAlign === 'right' ? width : width / 2;
         var textYCoordinate = gifshotOptions.textYCoordinate ? gifshotOptions.textYCoordinate : textBaseline === 'top' ? 1 : textBaseline === 'center' ? height / 2 : height;
         var font = fontWeight + ' ' + fontSize + ' ' + fontFamily;
-        var textToUse = frameText ? frameText : text;
+        var textToUse = frameText && gifshotOptions.showFrameText ? frameText : text;
         var imageData = void 0;
 
         try {

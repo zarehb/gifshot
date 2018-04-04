@@ -288,7 +288,7 @@ AnimatedGIF.prototype = {
       const textXCoordinate = gifshotOptions.textXCoordinate ? gifshotOptions.textXCoordinate : textAlign === 'left' ? 1 : textAlign === 'right' ? width : width / 2;
       const textYCoordinate = gifshotOptions.textYCoordinate ? gifshotOptions.textYCoordinate : textBaseline === 'top' ? 1 : textBaseline === 'center' ? height / 2 : height;
       const font = fontWeight + ' ' + fontSize + ' ' + fontFamily;
-      const textToUse = (frameText) ? frameText : text;
+      const textToUse = (frameText && gifshotOptions.showFrameText) ? frameText : text;
       let imageData;
 
 
