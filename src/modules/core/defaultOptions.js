@@ -40,7 +40,12 @@ const defaultOptions = {
     saveRenderingContexts: false,
     savedRenderingContexts: [],
     showFrameText: true,
-    crossOrigin: 'Anonymous'
+    crossOrigin: 'Anonymous',
+    waterMark: null,
+    waterMarkHeight: null,
+    waterMarkWidth: null,
+    waterMarkXCoordinate: 1,
+    waterMarkYCoordinate: 1
 };
 
 export default defaultOptions;
