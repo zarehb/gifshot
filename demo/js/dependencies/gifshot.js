@@ -412,7 +412,12 @@ var defaultOptions = {
     saveRenderingContexts: false,
     savedRenderingContexts: [],
     showFrameText: true,
-    crossOrigin: 'Anonymous'
+    crossOrigin: 'Anonymous',
+    waterMark: null,
+    waterMarkHeight: null,
+    waterMarkWidth: null,
+    waterMarkXCoordinate: 1,
+    waterMarkYCoordinate: 1
 };
 
 
@@ -1811,7 +1816,12 @@ AnimatedGIF.prototype = {
             gifWidth = _gifshotOptions.gifWidth,
             text = _gifshotOptions.text,
             textAlign = _gifshotOptions.textAlign,
-            textBaseline = _gifshotOptions.textBaseline;
+            textBaseline = _gifshotOptions.textBaseline,
+            waterMark = _gifshotOptions.waterMark,
+            waterMarkHeight = _gifshotOptions.waterMarkHeight,
+            waterMarkWidth = _gifshotOptions.waterMarkWidth,
+            waterMarkXCoordinate = _gifshotOptions.waterMarkXCoordinate,
+            waterMarkYCoordinate = _gifshotOptions.waterMarkYCoordinate;
 
         var textXCoordinate = gifshotOptions.textXCoordinate ? gifshotOptions.textXCoordinate : textAlign === 'left' ? 1 : textAlign === 'right' ? width : width / 2;
         var textYCoordinate = gifshotOptions.textYCoordinate ? gifshotOptions.textYCoordinate : textBaseline === 'top' ? 1 : textBaseline === 'center' ? height / 2 : height;
@@ -1831,7 +1841,9 @@ AnimatedGIF.prototype = {
                 ctx.textBaseline = textBaseline;
                 ctx.fillText(textToUse, textXCoordinate, textYCoordinate);
             }
-
+            if (waterMark) {
+                ctx.drawImage(waterMark, waterMarkXCoordinate, waterMarkYCoordinate, waterMarkWidth, waterMarkHeight);
+            }
             imageData = ctx.getImageData(0, 0, width, height);
 
             self.addFrameImageData(imageData);

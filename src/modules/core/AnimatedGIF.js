@@ -283,7 +283,12 @@ AnimatedGIF.prototype = {
           gifWidth,
           text,
           textAlign,
-          textBaseline
+          textBaseline,
+          waterMark,
+          waterMarkHeight,
+          waterMarkWidth,
+          waterMarkXCoordinate,
+          waterMarkYCoordinate
       } = gifshotOptions;
       const textXCoordinate = gifshotOptions.textXCoordinate ? gifshotOptions.textXCoordinate : textAlign === 'left' ? 1 : textAlign === 'right' ? width : width / 2;
       const textYCoordinate = gifshotOptions.textYCoordinate ? gifshotOptions.textYCoordinate : textBaseline === 'top' ? 1 : textBaseline === 'center' ? height / 2 : height;
@@ -304,7 +309,9 @@ AnimatedGIF.prototype = {
               ctx.textBaseline = textBaseline;
               ctx.fillText(textToUse, textXCoordinate, textYCoordinate);
           }
-
+          if(waterMark) {
+            ctx.drawImage(waterMark, waterMarkXCoordinate, waterMarkYCoordinate, waterMarkWidth, waterMarkHeight);
+          }
           imageData = ctx.getImageData(0, 0, width, height);
 
           self.addFrameImageData(imageData);

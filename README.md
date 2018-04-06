@@ -321,7 +321,17 @@ gifshot.takeSnapShot(function(obj) {
 'showFrameText': true,
 // If frame-specific text is supplied with the image array, you can force the frame-specific text to not be displayed
 // by making this option 'false'.
-'crossOrigin': 'Anonymous'
+'crossOrigin': 'Anonymous',
+waterMark: null,
+// If an image is given here, it will be stamped on top of the GIF frames
+waterMarkHeight: null,
+// Height of the waterMark
+waterMarkWidth: null,
+// Height of the waterMark
+waterMarkXCoordinate: 1,
+// The X (horizontal) Coordinate of the watermark image
+waterMarkYCoordinate: 1
+// The Y (vertical) Coordinate of the watermark image
 ```
 
 ## Contributing
