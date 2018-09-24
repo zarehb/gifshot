@@ -322,6 +322,8 @@ gifshot.takeSnapShot(function(obj) {
 // If frame-specific text is supplied with the image array, you can force the frame-specific text to not be displayed
 // by making this option 'false'.
 'crossOrigin': 'Anonymous',
+delayOnLast: null,
+// if set, very last frame will be delayed before repeat
 waterMark: null,
 // If an image is given here, it will be stamped on top of the GIF frames
 waterMarkHeight: null,

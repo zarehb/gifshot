@@ -1763,7 +1763,9 @@ AnimatedGIF.prototype = {
             var framePalette = frame.palette;
 
             onRenderProgressCallback(0.75 + 0.25 * frame.position * 1.0 / frames.length);
-
+            if (options.delayOnLast && frame.position === frames.length - 1) {
+                delay = options.delayOnLast;
+            }
             for (var i = 0; i < frameDuration; i++) {
                 gifWriter$$1.addFrame(0, 0, width, height, frame.pixels, {
                     palette: framePalette,
